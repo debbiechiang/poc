@@ -91,7 +91,6 @@ boost.ballDrop = (function($, jQuery, boostModernizr){
         if (typeof jQuery.fn.avp === 'function') {
             $boost.fn.avp = jQuery.fn.avp;
         } else {
-            // console.log('.... what is the aditv player bound to?');
         };
 
         $(boost.ballDrop.vars.targetElement).avp({
@@ -112,7 +111,6 @@ boost.ballDrop = (function($, jQuery, boostModernizr){
                 clearInterval(ourInterval);
                 callBackPlayer(playStatus, playList);
             } catch(e) {
-                //console.log('player attributes undefined');
             }
         }, 100);
 
@@ -156,9 +154,6 @@ boost.ballDrop = (function($, jQuery, boostModernizr){
         loadPlayer();
 
         function loadPlayer() {
-                // console.timeStamp('loadPlayer()');
-                // console.log('03 loadPlayer()');
-
                 var params = {
                     allowScriptAccess: "always",
                     wmode:'transparent'
@@ -190,21 +185,16 @@ boost.ballDrop = (function($, jQuery, boostModernizr){
             onPlayerStateChange = function(stateId){
                 if (stateId === 5) {
                     $.publish('boost.youtube.playing', true);
-                    // console.log('youtube video cued');
                     
 
                 } else if (stateId === 1) {
-
-                    // console.log('youtube video playing!');
                     // NOTE: Chromeless youtube video quality can only be set AFTER it starts playing.
                     // ytplayer.setPlaybackQuality("large");
-                    // console.log(ytplayer.getPlaybackQuality());
 
                 } else if (stateId === 3){
                     $('.watchvideo').css('z-index', 0);
                     boost.preloader.offsetsLoaded = true;
                     boost.preloader.finishLoader();
-                    // console.log('youtube video buffering!');
 
                 } else if (stateId === 0) {
                     boost.ballDrop.vars.$videoParent.children().remove();
@@ -261,10 +251,7 @@ boost.ballDrop = (function($, jQuery, boostModernizr){
             };
         } else {
 
-            console.info('.......... boost.ballDrop.vars.useHeroPreroll == false');
-
         };
-        console.groupEnd();
     }
 
     return {

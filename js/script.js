@@ -100,21 +100,21 @@ Handlebars.registerHelper('tagHandler', function(context, block){
 
     // Init func
     var init =  function() {
-        boost.cache.init();
+        this.cache.init();
 
-        boost.preloader.init();
-        boost.events.init();
-        boost.rAF();
-        boost.loader.init();
-        boost.inView();
-        boost.style.init();
-        boost.carousel();
-        boost.animate();
-        boost.hotspot.bind();
-        boost.tray.init();
-        boost.colors.init();
-        boost.reviews.init();
-        boost.ytiframe.init();
+        this.preloader.init();
+        this.events.init();
+        this.rAF();
+        this.loader.init();
+        this.inView();
+        this.style.init();
+        this.carousel();
+        this.animate();
+        this.hotspot.bind();
+        this.tray.init();
+        this.colors.init();
+        this.reviews.init();
+        this.ytiframe.init();
 
         // load social plugins after video has started to play
         $.subscribe('boost.youtube.playing', boost.social.addthis);
@@ -134,8 +134,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
         // (b) we tell them to execute a script
         //  example in js/boost.localize.sample.js
         $.publish('boost.localize.scripts');
-        // call metrics script execution
-        $.publish('boost.metrics.init');
         // boost.loadVideoOverlay();
 
         // Delegate .transition() calls to .animate()
@@ -146,6 +144,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
 
     var cache = {
         init: function() {
+            boost.els.$body = $('body');
             // screens
             boost.els.$screen1 = $('#screen1');
             boost.els.$screen2 = $('#screen2');
@@ -154,18 +153,33 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             boost.els.$screen5 = $('#screen5');
             boost.els.$screen6 = $('#screen6');
 
+            // animation on screen 1
             boost.els.$movingShoe = $('.movingshoe');
             boost.els.$wipeRight =  $('.wiperight');
             boost.els.$splitScreenHero = $('#splitscreenhero');
+            boost.els.$cloneholder01 = $('.cloneholder01');
+            boost.els.$cloneholder02 = $('.cloneholder02');
+            boost.els.$shoePrev = $('#shoeprev');
 
+            // product carousel 
+            boost.els.$carousel = $('.carousel');
+            boost.els.$carouselcta = boost.els.$carousel.find('.bigcta');
+            boost.els.$carouselpage = boost.els.$carousel.find('#productpagination');      
 
+            // lookbook carousel
+            boost.els.$lookbook = $('.lookbook');
+            boost.els.$lookbookcta = boost.els.$lookbook.find('.bigcta');
+            boost.els.$lookbookpage = boost.els.$lookbook.find('#lookpagination');              
         }
     };
 
     var hotspot = {
         init: function(activeslide) {
-            boost.hotspot.delayabit(activeslide);
-            boost.hotspot.activatetophs(activeslide);
+            if (activeslide.data('hsLoaded') != true){
+                this.delayabit(activeslide);
+                this.activatetophs(activeslide);
+                activeslide.data('hsLoaded', true); 
+            }
         },
         bind: function(){
             $(".hs_cta").click(function() {
@@ -286,8 +300,8 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             }
         ],
         init: function(){
-            boost.style.update();
-            boost.style.positionHero('.movingshoe', 'orig');
+            this.update();
+            this.positionHero('.movingshoe', 'orig');
 
             $('.watchvideo').css('left',664-$('.watchvideo').width()/2);
 
@@ -304,22 +318,24 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 });
             };
 
-            boost.style.alignIt($('.mensredshoe'), 0, 'left');
+            this.alignIt($('.mensredshoe'), 0, 'left');
 
            
         }, // boost.style.init();
 
         reset: function() {
-            boost.vars.hsLoaded = false;
+            // If the user scrolls back up to the top of the slide, reset the entire experience. 
+            // boost.vars.hsLoaded = false;
             $('.boosths').css('opacity',0).removeClass('active');
+            $('.slide').data('hsLoaded', false);
             boost.els.$screen1.removeClass('slideshowView');
 
             boost.colors.resetColorSplit();
-            $('.carousel').trigger('slideToPage', [0, {
+            boost.els.$carousel.trigger('slideToPage', [0, {
                 fx: 'none',
                 onBefore: function() {
-                    $('.cloneholder02').addClass('hidden');
-                    $('#shoeprev').addClass('inactive');
+                    boost.els.$cloneholder02.addClass('hidden');
+                    boost.els.$shoePrev.addClass('inactive');
                 },
                 onAfter: function() {
                     boost.style.positionHero('.movingshoe','orig');
@@ -327,6 +343,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                     $('#caption01').fadeIn();
                 }
             }]);
+
             $('.lookbook').trigger('slideToPage', [0, {
                 fx: 'none',
                 onBefore: function() {
@@ -355,31 +372,29 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             boost.vars.winH = $(window).height();
 
             // updating the hero positions that depend on absLeft
-            boost.style.orig.shoePos.left = absLeft + 50;
-            boost.style.orig.flare0Pos.left = absLeft + 450;
-            boost.style.orig.flare1Pos.left = absLeft + 20;
-            boost.style.orig.flare2Pos.left = absLeft - 200;
-            boost.style.blowout.shoePos.left = absLeft - 230;
-
-
+            this.orig.shoePos.left = absLeft + 50;
+            this.orig.flare0Pos.left = absLeft + 450;
+            this.orig.flare1Pos.left = absLeft + 20;
+            this.orig.flare2Pos.left = absLeft - 200;
+            this.blowout.shoePos.left = absLeft - 230;
 
             // update the distance that the men's shoe has to go in the colors transition
             boost.colors.kickoffscreen = '+='+ (boost.vars.winW - boost.vars.absLeft) + 'px';
 
             // update the product slide hero and lookbook image positions
             for (var i = 0; i < boost.style.initPos.length; i++) {
-                boost.style.alignIt($(boost.style.initPos[i].el), boost.style.initPos[i].pos, boost.style.initPos[i].proper);
+                this.alignIt($(boost.style.initPos[i].el), boost.style.initPos[i].pos, boost.style.initPos[i].proper);
             }
 
             // update the hero shoe transitions
-            boost.style.positionHero('.cloneholder01', 'orig');
-            boost.style.positionHero('.cloneholder02', 'blowout');
+            this.positionHero('.cloneholder01', 'orig');
+            this.positionHero('.cloneholder02', 'blowout');
 
             if(!boost.els.$wipeRight.hasClass('hidden')){
                 if (boost.els.$screen1.hasClass('slideshowView')){
-                    boost.style.positionHero('.movingshoe', 'blowout');
+                    this.positionHero('.movingshoe', 'blowout');
                 }else {
-                    boost.style.positionHero('.movingshoe', 'orig');
+                    this.positionHero('.movingshoe', 'orig');
                 }
             }
             // @todo: generalize this part.
@@ -402,7 +417,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                     left:boost.vars.winW/2
                 });
             }
-
 
             boost.els.$movingShoe.css({
                 'max-width': boost.vars.winW + 'px'
@@ -443,12 +457,8 @@ Handlebars.registerHelper('tagHandler', function(context, block){
 
     // Carousel
     var carousel = function() {
-
-
-        // carouFredSel settings object
-        //  object is fed to the $('.carousel').carouFredSel(fredSettings, fredOptions);
-        //  once set up
-        var fredSettings = {
+        // PRODUCT DETAILS CAROUSEL (screen1)
+        var prodSettings = {
             height: 800,
             width:boost.vars.winW,
             responsive:true,
@@ -465,88 +475,85 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             items: {
                 visible: 1,
                 width: boost.vars.winW
-           },
+            },
            onCreate: function() {
-                    var goingTo = $('.carousel').triggerHandler('currentPage');
-                    if (goingTo===0){$('#shoeprev').addClass('inactive');}
-                    
-                    $(this).parents('.screen').addClass('showing-slide-0');
+                boost.els.$shoePrev.addClass('inactive');
+                $(this).parents('.screen').addClass('showing-slide-0');
             },
             prev: {
-                button: $('#shoeprev'),
+                button: boost.els.$shoePrev,
                 onBefore: function(data) {
-                    $('body').scrollTo(boost.vars.slideHeight, 200);
-                    var goingTo = $('.carousel').triggerHandler('currentPosition') || 0;
+                    var $this = $(this);
+                    boost.els.$body.scrollTo(boost.vars.slideHeight, 200);
+
+                    var goingTo = $this.triggerHandler('currentPosition') || 0;
                     
                     // Add a "showing-slide-#' class to the parent <section> for CSS purposes
                     // (after removing any existing showing-slide-# class)
-                    $(this).parents('.screen').removeClass(function(i, c){
+                    $this.parents('.screen').removeClass(function(i, c){
                         return (c.match(/showing-slide-[0-9]+/ig) || []).join(' ');
                      }).addClass('showing-slide-' + goingTo);
 
                     switch (goingTo) {
                         case 0:
                             if (data.items.old[0].id == 'slide02'){
-                                //if going backwards from slide 2 to 1
+                                //if going backwards from slide 2 to 1, reverse that transition
                                 boost.style.positionHero('.movingshoe', 'blowout');
                                 boost.els.$movingShoe.removeClass('hidden');
-                                $('.cloneholder01, .cloneholder02').addClass('hidden');
+                                $(boost.els.$cloneholder02, boost.els.$cloneholder01).addClass('hidden');
                                 boost.style.animateHero('.movingshoe', 'orig', 1000);
                             }else {
+                                // otherwise, keep cloneholders in place and just scroll back through it. 
                                 boost.els.$movingShoe.addClass('hidden');
                                 boost.style.positionHero('.movingshoe', 'orig');
                                 if(!$.browser.msie || document.documentMode > 8)
-                                    $('.cloneholder01').removeClass('hidden');
+                                    boost.els.$cloneholder01.removeClass('hidden');
                             }
                             break;
                         default:
                             boost.els.$screen1.addClass('slideshowView');
-                            $('.cloneholder02').removeClass('hidden');
+                            boost.els.$cloneholder02.removeClass('hidden');
                              $('#productpagination').dockTo({
                                 'position': 'absolute'
                             });
                         break;
                     }
-                    $boost.publish('boost.metrics.direct.calls', {
-                        tagType : 'element',
-                        id : 'BOOST|PRODUCT_DETAIL|SLIDE_' + (goingTo + 1),
-                        cat : 'BOOST|PRODUCT_DETAIL'
-                    });
                 },
                 onAfter: function(data) {
-                    var goingTo = $('.carousel').triggerHandler('currentPage');
-                    
+                    var $this = $(this);
+                    var goingTo = $this.triggerHandler('currentPage');
                     var $thisSlide;
+
                     switch (goingTo) {
                         case 0:
-                            $('#shoeprev').addClass('inactive');
+                            boost.els.$shoePrev.addClass('inactive');
                             $('#caption01').fadeIn();
                             $('.slideshowView').removeClass('slideshowView');
-                            $('.cloneholder02').addClass('hidden');
+                            boost.els.$cloneholder01.addClass('hidden');
 
                             if (data.items.old[0].id == 'slide02'){
                             }else {
                                 //boost.style.positionHero('.movingshoe', 'orig');
                                 boost.els.$movingShoe.removeClass('hidden');
-                                $('.cloneholder01').addClass('hidden');
+                                boost.els.$cloneholder01.addClass('hidden');
                             }
                             break;
                         case 1:
-                            $('#shoeprev').removeClass('inactive');
-                            $('.cloneholder02').removeClass('hidden');
+                            boost.els.$shoePrev.removeClass('inactive');
+                            boost.els.$cloneholder02.removeClass('hidden');
                             $('#productpagination').dockTo({
                                 'position': 'absolute'
                             });
                             break;
                         default:
-                            $('#shoeprev').removeClass('inactive');
+                            boost.els.$shoePrev.removeClass('inactive');
                             $('#productpagination').dockTo({
                                 'position': 'absolute'
                             });
                             break;
                     }
 
-                    boost.hotspot.init($('.carousel').triggerHandler('currentVisible'));
+                    boost.hotspot.init($(this).triggerHandler('currentVisible'));
                 }
             },
             next: {
@@ -554,16 +561,16 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 fx: 'scroll',
                 duration: 400,
                 onBefore: function() {
-                    $('body').scrollTo(boost.vars.slideHeight, 200);
-                    var goingTo = $('.carousel').triggerHandler('currentPosition') || 0;
+                    var $this = $(this);
+                    boost.els.$body.scrollTo(boost.vars.slideHeight, 200);
+                    var goingTo = $this.triggerHandler('currentPosition') || 0;
                     
                     // Add a "showing-slide-#' class to the parent <section> for CSS purposes
                     // (after removing any existing showing-slide-# class)
-                    $(this).parents('.screen').removeClass(function(i, c){
+                    $this.parents('.screen').removeClass(function(i, c){
                         return (c.match(/showing-slide-[0-9]+/ig) || []).join(' ');
                      }).addClass('showing-slide-' + goingTo);
 
-                    
                     
                     switch (goingTo) {
                         case 0:
@@ -574,41 +581,36 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                         case 1:
                             $('#caption01').hide();
                             boost.els.$screen1.addClass('slideshowView');
-                            $('.cloneholder02, .cloneholder01').addClass('hidden');
+                            $(boost.els.$cloneholder02, boost.els.$cloneholder01).addClass('hidden');
                             boost.style.animateHero('.movingshoe', 'blowout', 800);
                             break;
                         default:
                             boost.els.$movingShoe.addClass('hidden');
-                            $('.cloneholder02').removeClass('hidden');
+                            boost.els.$cloneholder02.removeClass('hidden');
                             boost.els.$screen1.addClass('slideshowView');
                             break;
                     }
-                    $boost.publish('boost.metrics.direct.calls', {
-                        tagType : 'element',
-                        id : 'BOOST|PRODUCT_DETAIL|SLIDE_' + (goingTo + 1),
-                        cat : 'BOOST|PRODUCT_DETAIL'
-                    });
                 },
                 onAfter: function() {
-                    var goingTo = $('.carousel').triggerHandler('currentPage');
+                    var goingTo = $(this).triggerHandler('currentPage');
                                          
                     var $thisSlide;
                     switch (goingTo) {
                         case 0:
-                             $('#shoeprev').addClass('inactive');
+                            boost.els.$shoePrev.addClass('inactive');
                             $('#caption01').fadeIn(800);
                             boost.els.$movingShoe.removeClass('hidden');
                             break;
                         case 1:
-                             $('#shoeprev').removeClass('inactive');
-                            $('.cloneholder02').removeClass('hidden');
+                            boost.els.$shoePrev.removeClass('inactive');
+                            boost.els.$cloneholder02.removeClass('hidden');
                             break;
                         default:
-                            $('#shoeprev').removeClass('inactive');
+                            boost.els.$shoePrev.removeClass('inactive');
                             boost.els.$movingShoe.addClass('hidden');
                             break;
                     }
-                     boost.hotspot.init($('.carousel').triggerHandler('currentVisible'));
+                     boost.hotspot.init($(this).triggerHandler('currentVisible'));
                 }
 
             },
@@ -619,25 +621,35 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                     return '<a href="#' + nr + '">&nbsp;</a>';
                 }
             }
-
-        }; // fredSettings {} object
+        }; // prodSettings {} object
 
         // carouFredSel plugin options
-        var fredOptions = {
+        var prodOptions = {
             classnames: {
                 selected: 'active',
                 disabled: 'inactive'
             }
-        }; // fredOptions {} object
+        }; // prodOptions {} object
 
         // instantiate carouFredSel() with config options from above
-        $('.carousel').carouFredSel(fredSettings, fredOptions);
+        boost.els.$carousel.carouFredSel(prodSettings, prodOptions);
 
-        $('.bigcta').on('click', function() {
-            $(this).closest('.caroufredsel_wrapper').children().triggerHandler('nextPage');
-        });
+        function handleLookbookSlide(){
+            var $this = $(this);
+            var $lookprev = $('#lookprev');
+            var activeslidenum = $this.triggerHandler('currentPage');
+            var activeslide = $this.triggerHandler('currentVisible');
 
-        $('.lookbook').carouFredSel({
+            if (activeslidenum === 0){
+                $lookprev.addClass('inactive');
+            } else {
+                $lookprev.removeClass('inactive');
+            }
+
+            boost.hotspot.init(activeslide);
+        }
+
+        boost.els.$lookbook.carouFredSel({
             height: 800,
             circular: false,
             responsive: true,
@@ -650,104 +662,37 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 visible: 1
             },
             onCreate: function() {
-                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
-                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
+                $('#lookprev').addClass('inactive');
             },
             prev: {
                 button: $('#lookprev'),
                 fx: 'scroll',
                 duration: 400,
-                onBefore: function() {
-                    var goingTo = $('.lookbook').triggerHandler('currentPage');
-                    $boost.publish('boost.metrics.direct.calls', {
-                        tagType : 'element',
-                        id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_' + (goingTo + 1),
-                        cat : 'BOOST|APPAREL_LOOKBOOK'
-                    });
-                },
-                onAfter: function() {
-                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
-                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
-                        else{$('#lookprev').removeClass('inactive');}
-                    var activeslide = $('.lookbook').triggerHandler('currentVisible');
-                    delayabit = setTimeout((function() {
-                        activeslide.find('.boosths').each(function(i) {
-                            $(this).delay(i * 300).transition({
-                                'opacity': '1'
-                            }, 500, 'linear');
-                        });
-                    }), 200);
-                    activatetophs = setTimeout((function() {
-                        activeslide.find('.boosths:last-child').addClass('active');
-                    }), 1200);
-                }
+                onAfter: handleLookbookSlide,
             },
             next: {
                 button: $('#looknext'),
                 fx: 'scroll',
                 duration: 400,
                 onBefore: function() {
-                    var goingTo = $('.lookbook').triggerHandler('currentPage');
-                    $boost.publish('boost.metrics.direct.calls', {
-                        tagType : 'element',
-                        id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_' + (goingTo + 1),
-                        cat : 'BOOST|APPAREL_LOOKBOOK'
-                    });
+                    var goingTo = boost.els.$lookbook.triggerHandler('currentPage');
+
                     if (goingTo > 0){
-                        $('.lookbook .bigcta').dockTo({
+                        boost.els.$lookbookcta.dockTo({
                            'position':'absolute',
                            top:584,
                            right:0
                         });
                     }
                 },
-                onAfter: function() {
-                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
-                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
-                        else{$('#lookprev').removeClass('inactive');}
-                    var activeslide = $('.lookbook').triggerHandler('currentVisible');
-                    delayabit = setTimeout((function() {
-                        activeslide.find('.boosths').each(function(i) {
-                            $(this).delay(i * 300).transition({
-                                'opacity': '1'
-                            }, 500, 'linear');
-                        });
-                    }), 200);
-                    activatetophs = setTimeout((function() {
-                        activeslide.find('.boosths:last-child').addClass('active');
-                    }), 1200);
-                }
+                onAfter: handleLookbookSlide
             },
             pagination: {
                 container: $('#lookpagination'),
                 anchorBuilder: function(nr, item) {
                     return '<a href="#' + nr + '">&nbsp;</a>';
                 },
-                onBefore: function() {
-                    var goingTo = $('.lookbook').triggerHandler('currentPage');
-                    $boost.publish('boost.metrics.direct.calls', {
-                        tagType : 'element',
-                        id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_' + (goingTo + 1),
-                        cat : 'BOOST|APPAREL_LOOKBOOK'
-                    });
-                },
-                onAfter: function() {
-                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
-                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
-                    else{$('#lookprev').removeClass('inactive');}
-
-                    var activeslide = $('.lookbook').triggerHandler('currentVisible');
-                    delayabit = setTimeout((function() {
-                        activeslide.find('.boosths').each(function(i) {
-                            $(this).delay(i * 300).transition({
-                                'opacity': '1'
-                            }, 500, 'linear');
-                        });
-                    }), 200);
-                    activatetophs = setTimeout((function() {
-                        activeslide.find('.boosths:last-child').addClass('active');
-                    }), 1200);
-                }
+                onAfter: handleLookbookSlide
             }
         }, {
             classnames: {
@@ -755,6 +700,12 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 disabled: 'inactive'
             }
         });
+
+        // Both carousels have large CTAs on the first slide that act as next buttons.
+        $('.bigcta').on('click', function() {
+            $(this).closest('.caroufredsel_wrapper').children().triggerHandler('nextPage');
+        });
+
     }; // carousel()
 
     var tray = {
@@ -801,14 +752,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                     'href': boost.tray.titleArr[screennumber+1].id
                 })
                 .children('span:first-child').html(boost.tray.titleArr[screennumber+1].title);
-
-                if (boost.tray.metricsArr[screennumber].length){
-                    $boost.publish('boost.metrics.direct.calls', {
-                        tagType : 'element',
-                        id : 'BOOST|' + boost.tray.metricsArr[screennumber],
-                        cat : 'BOOST'
-                    });
-                }
 
                 boost.tray.currScreen = screennumber;
 
@@ -1198,19 +1141,8 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             }
 
             if (boost.els.$screen3.hasClass('inview')) {
-                // init the hotspots
-                if (!boost.vars.hsLoaded){
-                    $delayabit = setTimeout((function() {
-                        $('#look01').find('.boosths').each(function(ind) {
-                            $(this).delay(ind * 300).transition({
-                                'opacity': '1'
-                            }, 500, 'linear');
-                        });  
-                        $('#look01').find('.boosths').eq(3).delay(1000).addClass('active');
-                    }), 800);
-
-                    boost.vars.hsLoaded = true;
-                }
+                // automatically init the hotspots on the first lookbook slide. 
+                boost.hotspot.init(boost.els.$screen3.find('#look01'));
             }
 
             
@@ -1258,11 +1190,11 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             {
                 name : 'balldrop',
                 toggle : 'useHeroPreroll',
-                val : 0
+                val : 3
             }
         ],
         getMax: function(){
-            return boost.preloader.imgArray.length + boost.preloader.loadOffset + 1;
+            return boost.preloader.imgArray.length + boost.preloader.loadOffset;
         },
         setOffsets: function(){
             if (boost.vars[boost.preloader.offSetConfig[0].toggle]) {
@@ -1283,6 +1215,12 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 boost.preloader.progressbar.max = boost.preloader.getMax();
                 boost.preloader.preload(boost.preloader.imgArray);
             }
+
+            $.subscribe('boost.youtube.playing', function(){
+                boost.preloader.offsetsLoaded = true;
+                boost.preloader.finishLoader();
+            });
+
         },
         finishLoader: function(){
             if (boost.preloader.offsetsLoaded && boost.preloader.imgsLoaded) {
@@ -2047,7 +1985,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
 
     };
 
-}($boost, __boost__market, boost.Modernizr, __boost__env)); // /boost{}
+}($boost, boost.Modernizr, __boost__env)); // /boost{}
 
 // Document ready
 $boost(function() {
