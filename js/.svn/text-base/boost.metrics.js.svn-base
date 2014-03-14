@@ -1,0 +1,978 @@
+/**
+    boost.metrics.js
+    This is a wrapper for Adidas.com's CoreMetrics wrapper (adidasAnalytics.js).
+*/
+
+;var boost = boost || {};
+
+/** @namespace Holds functionality for the Adidas boost Metrics tracking code. */
+boost.metrics = (function ($, _market, _env, Modernizr) {
+
+    // @public boost.metrics, it's objects, methods, and properties are returned publically for this namespace.
+    var metrics = {
+
+        premade: false,
+
+        // toggle metrics on or off on a detailed basis
+        enable: {
+            tagging: true,    // turn on or off submissions
+            publish: true,     // turn on or off soliciting new tagging from other scripts (e.g. boost.public.js)
+            subscribe: true,    // turn on or off listening for new tagging from other scripts
+            delegation: true,       // are we running an event delegation global click event watcher
+            localUrls: false,      // are we using our locally hosted JS files?
+            mixedSourceUrls: false   // using some files from our site, some files from Coremetrics
+        },
+
+        // @field adidas coremetrics urls are stored as an array
+        // these are loaded asynchronously and don't need to be in a page via <script> unless this file isn't included
+        // ***NOTE: These were added piecemeal over time. There must be a better way to store these values.***
+        urls: {
+            eluminate: '//libs.coremetrics.com/eluminate.js',
+            // cmdata: '//www.adidas.com/globalservices/scripts/coremetrics/v40/cmdatatagutils.js',
+            adi: '//www.adidas.com/globalservices/scripts/adidas/adidasAnalytics.js'
+        },
+        local : {
+            path : '',
+            getFilePath : function(){
+                if (boost.metrics.local.path === '') {
+                    boost.metrics.local.path = boost.config.secureUrlIfNeeded(boost.config.urls.ASSETS_URL);
+                };
+                return boost.metrics.local.path;
+            },
+            urls : {}
+        },
+        getMixedSource : function() {
+            var fileSet = {
+                eluminate : boost.metrics.urls.eluminate, // remote eluminate
+                cmdata : boost.metrics.local.urls.cmdata, // local cmdata
+                adi : boost.metrics.local.urls.adi        // local adi
+            }
+            return fileSet;
+        },
+
+        // just some regex (not used on boost)
+        // when you use fragment(), the "#" is dropped
+        hashBangTest : new RegExp(/\/\#\!\//),
+        // detects /#!/
+        hashBangTestAlt : new RegExp(/\#\!\//),
+
+        // this is a collection of jQuery Selectors used to define a "page"
+        //  ... these selectors will point to elements which will have a
+        // set of data-cm-page attributes. if the attributes are not present,
+        // the script keeps looking, failing harmlessly if it never finds anything
+        pageTypes: [
+            '#boost-page-metrics-data-tag'
+        ],
+
+        items: {
+            // globals are click events, typically
+            globals: [],
+            // hacks: yes, this is what it sounds like.
+            hacks: [],
+            // nav is easy to peg as delegated events
+            nav: []
+        },
+
+        // ***************** INTERNAL SETTINGS For Metrics
+        // internal setting
+        adi: null, // used for the new Adidas(bool) instance
+
+        // internal setting
+        // types of adidas-metrics (am) element attributes that store values
+        types: {
+            page: 'page',
+            element: 'element'
+        },
+
+        // internal setting
+        // string reps of the $().data(html5 data attribute name) goes here converted for JS (dashed items are converted to mixedCase)
+        attr: {
+            tagType: 'amType', // data-am-type
+            id: 'amId',        // data-am-id
+            cat: 'amCat',      // data-am-cat
+            action: 'amAction' // data-am-action
+        },
+
+        // objects passed in by "boost.metrics.assign.clicks"
+        clickObjectCache: {},
+
+        // items are pushed into this array when they're part of the list we want to watch
+        // this array is modified as we look for items, because we don't want to execute
+        //      DOM selects more than one time (if possible). we add a domNode property to each
+        delegationCache: [],
+
+        // these are delegates where the data is embedded in the element with data-attributes
+        // they're looked up when published to metrics, and then added to the delegationCache
+        inlineDelegates: [],
+
+        // @param   items = []
+        addToWatchCache: function (items) {
+
+            // console.info('[boost.metrics.addToWatchCache()] items about to add to cache', boost.metrics.delegationCache, items);
+
+            var cache = boost.metrics.delegationCache;
+            if (Object.prototype.toString.call(items) !== "[object Array]") {
+                items = $.makeArray(items);
+            };
+            if (items.length > 0) {
+                boost.metrics.delegationCache = cache.concat(items); // combine the arrays
+                // console.info('[boost.metrics.addToWatchCache()] items added to cache', boost.metrics.delegationCache);
+            };
+            // console.log('.... current delegationCache', boost.metrics.delegationCache);
+        },
+
+        // @param target = event.target of an event delegation body.click
+        //      need to run through delegationCache and find if the item has been found
+        //      if it's not found, then keep looping through the remaining items
+        findTargetItemInCache: function (target) {
+            var mm = boost.metrics,
+                returnNode = null;
+            var domTarget = target,
+                delCache = mm.delegationCache;
+            var $item;
+
+            // make sure we're comparing actual DOM nodes, not jQuery objects
+            domTarget = $(domTarget).get(0);
+
+            // console.groupCollapsed("iteration over ", delCache);
+
+            // console.info('\t\t\t****** **** ', domTarget, delCache);
+
+            // one by one, look up items in delegationCache[]
+            $.each(delCache, function (objKey, objVal) {
+
+                // console.info(objKey); // iteration on this object
+                // reset $item from previous iteration (just in case)
+                $item = null;
+
+                // console.info('\t\t\t\t\t ************** ', objVal);
+
+                // if there's no objVal.domNode then it hasn't been looked up previously.
+                if (objVal.domNode === undefined || objVal.domNode !== false) {
+
+                    // console.group('looking');
+
+                    // look up the item's dom Node
+                    $item = $(objVal.selectors);
+
+                    if ($item.size() > 1) {
+                        var $otherFItem = $item.filter(target);
+                        
+                        // console.warn('did we find an item (filter) ? ', $otherFItem.size());
+                        // console.warn('\t\tfilter item ? ', $otherFItem.get(0));
+
+                        $item = $otherFItem.get(0);
+
+                        // console.log('we will compare:');
+                        // console.log($item);
+                        // console.log(domTarget);
+
+                    } else {
+                        $item = $item.get(0);
+                    };
+
+                    // save this jQuery Lookup for later, and comparison
+                    objVal.domNode = $item;
+
+                    // console.groupEnd();
+
+                } else if (typeof objVal.domNode === 'object') {
+                    // set the item's dom Node for comparison
+                    $item = objVal.domNode;
+                } else {
+                    // effectively flag this as a bit of bad data for next time
+                    objVal.domNode = false;
+                    // console.warn('..... metrics has bad iteration data object in findTargetItemInCache()');
+                };
+
+                if ($item !== undefined) {
+                    // is this the same node as the click event target?
+                    // $.contains( container, contained )
+                    // we use contains for when the event.target is, for example, a SPAN inside an Anchor
+                    if (($item === domTarget || $.contains($item, domTarget) === true)) {
+                        console.info('........ we found the target item!!! tagging item based on ', $item, domTarget, objVal);
+                        returnNode = objVal;
+                        return false;
+                    } else {
+                        //console.info('........ no metrics delegation item found on this iteration', $item, domTarget);
+                    };
+                };
+
+            });
+
+            return returnNode;
+        },
+
+        // special for boost
+        detectSharing: function(id, $el){
+            var newId = id;
+            if (id.toLowerCase().indexOf('share') !== -1) {
+                newId = id + $($el).text().toUpperCase();
+            } else if (id.toLowerCase().indexOf('bottom') !== -1 && id.toLowerCase().indexOf('bottom_') == -1) {
+                var index = $el.attr('id').charAt(10);
+                // console.log(index);
+                // console.log(boost.tray.metricsArr[index]);
+                newId = id + boost.tray.metricsArr[index];
+            };
+            return newId;
+        },
+
+        // set of arrays to track click events on passed in
+        // these usually have data embedded in the page via data-xyz attributes
+        setUpClickArrays: function (data) {
+            var mm = boost.metrics;
+
+            var count = data.length;
+
+            // console.info('[boost.metrics.assign.clicks] getting an array of assign.clicks ', count, " ", data);
+
+            if (count > 0) {
+                $.each(data, function (i, val) {
+
+                    // here we tell it what to do when the user clicks
+                    $(val).click(function (e) {
+                        // console.info('### metrics click event triggered', e.target);
+
+                        var $this = $(this);
+                        var idDataForThis;
+                        if ($this.data(mm.attr.tagType)) {
+                            idDataForThis = null;
+                            idDataForThis = boost.metrics.detectSharing($this.data(mm.attr.id), $this);
+                            boost.metrics.tag($this.data(mm.attr.tagType), [idDataForThis, $this.data(mm.attr.cat)]);
+
+                        } else {
+                            // console.warn('#### metrics.assign.clicks no data attributes', data);
+                        }
+                        // e.preventDefault(); // actually, we don't want to kill click events on metrics
+                    });
+
+                }); // end each()
+            }; // end if
+        },
+
+        // set of nested objects to track via object.selectors passed in and handled
+        setUpClickObjects: function (data) {
+            // console.log('setUpClickObjects: ', data);
+            var mm = boost.metrics;
+
+            if (data === undefined) {
+                data = mm.clickObjectCache;
+            } else {
+                mm.clickObjectCache = data;
+            };
+
+            // console.info('[boost.metrics.assign.clicks] getting an Object of assign.clicks ', data);
+
+                var tagType, tagCSSPath, tagId, tagCat, args;
+
+            $.each(data, function (i, val) {
+                if (typeof val === 'object') {
+                    // @refactor.future.JS
+                    // these should be just tagElements for now (tagPageView() shouldn't ever show up here)
+                    if (val.tagType !== mm.types.conversion) { // if not conversion will be tagPageElement
+                        try {
+
+                            tagCSSPath = val.selectors;
+
+                            // $(tagCSSPath).click(function(e){
+                            $(tagCSSPath).unbind("click.metrics").bind("click.metrics", function (e) {
+
+                                tagType = val.tagType;
+                                tagId = val.id;
+                                tagCat = val.cat;
+
+                                var idDataForThis = null;
+                                    idDataForThis = boost.metrics.detectSharing(tagId, $(this));
+
+                                args = [idDataForThis, tagCat];
+
+                                boost.metrics.tag(tagType, args);
+                            }); // end click assignment
+
+                        } catch (e) {
+                            // console.warn('[boost.metrics.assign.clicks] object is missing required properties.', e);
+                        }
+                    } else {
+                        // console.warn('[boost.metrics.assign.clicks] currently passing in conversion onclick elements is not supported.');
+                    };
+                };
+            });
+
+        },
+
+        // arrays of selectors only are passed in when the item has inline data-attributes
+        setUpDelegateArrays: function (data) {
+
+            // console.groupCollapsed('setUpDelegateArrays()');
+
+            var mm = this,
+                count = data.length,
+                $lookup,
+                delegateObject = {},
+                delegateObjects = [];
+
+            if (count > 0) {
+
+                $.each(data, function (i, val) {
+                    $lookup = null;
+                    $lookup = $(val);
+
+                    if ($lookup.size() > 0) {
+
+                        // console.log('[boost.metrics.setUpDelegateArrays()] what is our $lookup?', $lookup, $lookup.data());
+
+                        if ($lookup.data(mm.attr.tagType)) {
+                            try {
+                                    delegateObject = {
+                                        selectors: val,
+                                        tagType: $lookup.data(mm.attr.tagType),
+                                        id: $lookup.data(mm.attr.id),
+                                        cat: $lookup.data(mm.attr.cat)
+                                };
+
+                                // add full object to array                                
+                                delegateObjects.push(delegateObject);
+                                // add to full delegationCache
+
+                                // console.warn('adding these to the addToWatchCache()', delegateObjects);
+                            } catch (e) {
+                                console.warn('[boost.metrics.setUpDelegateArrays()] issue trying to add items to delegationCache', e);
+                            }
+                        } else {
+                            // console.log('[boost.metrics.setUpDelegateArrays()] $lookup has no data', $lookup.data())
+                        };
+
+                    } else {
+                        // delegateObject = {};
+                        // console.log('[boost.metrics.setUpDelegateArrays()] $lookup not found');
+                    };
+
+                    if (delegateObjects.length > 0) {
+                        boost.metrics.addToWatchCache(delegateObjects);
+                    };
+
+                }); // end each()
+
+            };
+
+            // console.groupEnd();
+        },
+
+        setup: function (e) {
+
+            var boostm = boost.metrics;
+            console.info('##### Running metrics setup....');
+
+            // hate that we need this
+            if (boostm.enable.localUrls || boostm.enable.mixedSourceUrls) {
+                var boostmLocals = boostm.local.urls;
+                $.each(boostmLocals, function(idx, val){
+                    boostmLocals[idx] = boostm.local.getFilePath() + val;
+                });
+            };
+
+            if (boostm.enable.delegation) { // if we're using body click event delegation
+                // this efficiently captures clicks in event delegation as opposed to specifically assigned click handlers
+                // console.info("........ are we setting up delegation listening for metrics?");
+                boostm.initGlobalClickHandler();
+            } else {
+                // console.info('...... delegation on metrics is disabled.');
+            };
+
+            var globals = boostm.items.globals,
+                hacks = boostm.items.hacks,
+                nav = boostm.items.nav;
+
+            if (globals.length > 0) {
+                boostm.addToWatchCache(globals);
+            };
+
+            if (hacks.length > 0) {
+                boostm.addToWatchCache(hacks);
+            };
+
+            if (nav.length > 0) {
+                boostm.addToWatchCache(nav);
+            };
+
+            /*
+               Function mapObjectValues
+
+               pull values for each array-like object
+               
+               Parameters:
+                  obj : object
+
+               Returns:
+                  array of values from object
+            */
+            function mapObjectValues(obj){
+               var newarray = $.map(obj, function (item) { return item; });
+               return newarray;
+            }
+
+            var loadArr = [];
+            if (boostm.enable.localUrls) {
+                loadArr = mapObjectValues(boostm.local.urls);
+            } else if (boostm.enable.mixedSourceUrls) {
+                var ourMixedSource = boostm.getMixedSource();
+                loadArr = mapObjectValues(ourMixedSource);
+            } else {
+                loadArr = mapObjectValues(boostm.urls);
+            };
+
+            // start to configure core metrics
+            if (typeof window.adidas === 'object') {
+                boostm.premade = true;
+                boostm.adi = window.adidas;
+                // console.log('^^^^^^^^ run execute() from main setup');
+                boost.metrics.execute();
+            } else {
+                // console.groupCollapsed('METRICS: LOAD THESE URLS');
+                    // console.info(loadArr);
+                // console.groupEnd();
+                Modernizr.load({
+                    load : loadArr,
+                    complete: function () {
+                        // console.log('^^^^^^^^ run execute() from Modernizr');
+                        boost.metrics.adi = boost.metrics.createAdidasMetricsObject();
+                        boost.metrics.execute();
+                        // console.info('^^^^Modernizr.load() of metrics complete() by Version', Modernizr._version);
+                    } // done with Modernizr complete() event
+                }); // end Modernizr.load()
+            };
+            // console.info('## metrics setup() done');
+        },
+
+        execute: function(){
+            // console.log('## metrics scripts loaded: typeof Adidas = ', typeof window.adidas);
+            var boostm = boost.metrics;
+
+            // if we were unable to define the adi object, we can't run metrics.
+            if (boostm.adi === false || boostm.adi === null) {
+                // console.warn('^^^^Adidas Analytics Library not properly loaded. Aborting metrics setup.');
+                return true;
+            } else {
+                // console.info('^^^^ creating tagging client ids etc.');
+                if (!boost.metrics.isProd()) {
+                    // test ids "borrowed" from d rose
+                    // @todo: this may duplicate something if the one site header is present
+                    cmSetClientID('60297162;60297136', false, 'metrics.adidas.com', 'metrics.adidas.com'); // Test
+                };
+                // cmSetClientID('90297162;90297136', false, 'metrics.adidas.com', 'metrics.adidas.com'); // Production
+            };
+
+            // expose window.adidas so that Flex may use it.
+            // window.adidas = (window.adidas !== undefined) ? window.adidas : boostm.adi; // make public for Flex etc.
+
+            boostm.page = boostm.detectPageView();
+            if (boostm.page !== null) {
+                // this tags the given page tagPageView based on the
+                // data-am-[tags] found in the html
+                boostm.tag('page', boostm.page);
+            };
+
+            // listening for clicks and tracking elements from other parts of the site
+            if (boostm.enable.subscribe) {
+
+                // console.log('.......subscribe events in metrics listening');
+
+                // listen for in-page ajax calls like on the products page
+                // this is specific to the boost copy of jQuery
+                // - when the page hash changes, check for a page change
+                $.subscribe('boost.ajaxcomplete', function (e) {
+
+                    // console.warn('....... subscribe events from metrics: boost.ajaxcomplete');
+
+                    var ajaxPage = null;
+                    if (location.href.match(boostm.hashBangTest) || location.href.match(boostm.hashBangTestAlt)) {
+                        ajaxPage = boostm.detectPageView();
+                        if (ajaxPage != null) {
+                            if (boostm.page != null) {
+                                if (ajaxPage.toString() != boostm.page.toString()) {
+                                    boostm.tag('page', ajaxPage);
+
+                                    // @todo we need to rebind metrics.clicktracking handlers for metrics!!!
+
+                                    boostm.page = ajaxPage;
+                                };
+                            };
+
+                            // set up click events again, because delegation doesn't work for those items if they're added with ajax
+                            if (!$.isEmptyObject(boostm.clickObjectCache)) {
+                                // console.log('....................... RE-RUNNING CLICK SETUPS AFTER AJAX RAN');
+                                boost.metrics.setUpClickObjects();
+                            };
+                        };
+
+
+                    } else {
+                        // console.warn('^^^^ hashchange event; metrics found no hashbang');
+                    }
+                });
+
+                // allow other pages to trigger onClick-based tracking (TRY TO KEEP THIS TO A MINIMUM)
+                //  these are passed in via clickTracking data sets
+                // @param data - here we get an array of selectors or
+                // @param data - *or* an object list of elements to be tracked
+                // means we're on a page that is passing in specific data/click items to be added to the list of things to track
+                //      this is unfortunate because we're doing hard wired click tracking, at least for now
+                $.subscribe('boost.metrics.assign.clicks', function (e, data) {
+                    // console.trace();
+                    // DEPRECATED!!!!!!!!
+                    // an array was passed in, handle list one way
+                    // NOTE: when we pass in an array of selectors on assign.clicks we get elements with
+                    //  embedded data-attributes on the elements
+                    if (Object.prototype.toString.call(data) === "[object Array]") {
+
+                        boostm.setUpClickArrays(data);
+
+                        // or, preferrably we passed in an object (with all data) instead of just an array of
+                        //      selectors when we pass in an object, it's the full set of needed data
+                    } else {
+
+                        boostm.setUpClickObjects(data);
+
+                    }
+
+                }); // end subscribe('boost.metrics.assign.clicks')
+
+                // delegate items need to be passed in as an array of objects
+                $.subscribe('boost.metrics.assign.delegates', function (e, data) {
+                    // console.trace();
+                    if (Object.prototype.toString.call(data) === "[object Array]") {
+                        // console.log('..... [boost.metrics.assign.delegates] click delegates obtained by subscriptions', data);
+                        boost.metrics.addToWatchCache(data); // add collection to delegationCache
+                    } else {
+                        // console.warn('...... [boost.metrics.assign.delegates] click delegates must be an array of objects');
+                    };
+                    // console.groupEnd();
+                });
+
+                // directly adding a call to tag something
+                $.subscribe('boost.metrics.direct.calls', function(e, data){
+                    /*
+                        @param data = {
+                            tagType : 'element',
+                            id : 'BOOST|REVIEWS|READ_MORE',
+                            cat : 'BOOST|REVIEWS'
+                        }
+                        
+                        $.publish('boost.metrics.direct.calls', {
+                        or 
+                        $boost.publish('boost.metrics.direct.calls', {
+                            tagType : 'element',
+                            id : 'BOOST|REVIEWS|READ_MORE',
+                            cat : 'BOOST|REVIEWS'
+                        });
+                    */
+
+                    var tagType = (typeof data.tagType !== 'undefined') ? data.tagType : 'element';
+                    var tagId = (typeof data.id !== 'undefined') ? data.id : 'BOOST';
+                    var tagCat = (typeof data.cat !== 'undefined') ? data.cat : 'BOOST';
+
+                    try {
+                        boost.metrics.tag(tagType, [tagId, tagCat])
+                    } catch (e){
+                        cosole.warn('Issue with boost.metrics.direct.calls');
+                    }
+                });
+
+            } else {
+                // console.info('...... subscriptions for metrics disabled.');
+            }; // done with subscriptions to metrics
+
+            // notify the rest of the app it's ready to listen for assignments
+            if (boostm.enable.publish) {
+                // console.log('....... publishing events from metrics, asking for metrics config');
+                // let other scripts know we're listening
+                $.publish('boost.metrics.requested'); // includes .clicks and .delegates
+                // $.publish('boost.metrics.requested.clicks');
+                // in turn, they send $.publish('boost.metrics.assign.clicks', data);
+                // $.publish('boost.metrics.requested.delegated.clicks');
+                // in turn, they send $.publish('boost.metrics.assign.delegates', data)
+            } else {
+                // console.info('..... publlishing a call for listening on metrics is disabled.');
+            };
+        },
+
+        // take the env flag from boost environment
+        isProd: function(){
+            var flag = _env;
+            if (_env === 'prod') {
+                return true;
+            } else return false;
+        },
+
+        // simple object creation per Adi guidelines
+        createAdidasMetricsObject: function () {
+            try {
+                var adidas = new Adidas(boost.metrics.isProd());
+                return adidas;
+            } catch (e) {
+                // console.warn('issue creating Adidas object?', e);
+                return false;
+            }
+        },
+
+        // sets up listening for the event delegation body.click for this page
+        initGlobalClickHandler: function () {
+            // we listen to the global boost body click handler
+            $.subscribe('boost.events.delegation.body.click', function (e, data) {
+
+                var mm = boost.metrics;
+                var target = data.target; // event.target for delegation
+                console.log("[boost.metrics] ...... document body click event.target", target);
+
+                var foundDelegate = mm.findTargetItemInCache(target);
+
+                var idDataForThis = null;
+
+                if (foundDelegate !== null) {
+
+                    // console.log('foundDelegate.id: ', foundDelegate.id);
+
+                    var args = [];
+                    idDataForThis = boost.metrics.detectSharing(foundDelegate.id, $(target).get(0));
+
+                    args = [idDataForThis, foundDelegate.cat];
+                    mm.tag(foundDelegate.tagType, args);
+
+                } else {
+                    // console.warn('..... metrics event delegation found no matching item.', target);
+                };
+
+            });
+        },
+
+        // executes the actual adidas.Analytics function call. arrParams needs to be an array
+        // @param arrParams (described in comments at the top of this file)
+        tag: function (strType, arrParams) {
+            var mm = boost.metrics;
+            // console.log('tagging ', strType, arrParams);
+            if (mm.enable.tagging) {
+
+                if (strType === mm.types.page) {     // tagging page views
+
+                    console.log('\t## tagging a page type', arrParams);
+                    mm.adi.Analytics.tagPageView.apply(null, arrParams);
+
+                } else if (strType === mm.types.element) {   // tagging page elements (usually clicks)
+
+                    console.log('\t## tagging a page element', arrParams);
+                    mm.adi.Analytics.tagPageElement.apply(null, arrParams);
+
+                }
+            };
+            return true;
+        },
+
+        // search through page types looking for attributes (boost.metrics.pageTypes above)
+        // this function checks the globally set classes/data-attributes we use to identify a page
+        //      such as:
+        //         <div id="background" class="homepage"
+        //                  data-am-type="page"
+        //                  data-am-id="BR_MC_home"
+        //                  data-am-cat="Brand/boost">
+        detectPageView: function () {
+            var mm = boost.metrics,
+                $items = '',
+                $els = '',
+                page = null;
+
+            /// here we loop over boost.metrics.pageTypes, which are jQuery Selectors.
+            //      If we have a match, we check for special attributes on the target/found element
+            //      these attributes must be added to the HTML INLINE (see above for examples)
+            $.each(mm.pageTypes, function (idx, valOf) {
+                $items = $(valOf);
+                if ($items.size() > 0) {
+                    $items.each(function (i, ele) {
+                        $els = $(ele);
+                        // console.info('data:', $els, $els.data());
+                        if ($els.data(mm.attr.tagType) == mm.types.page) {
+                            // can we break out of the loop without returning on detectPageView();
+                            try {
+                                page = [$els.data(mm.attr.id), $els.data(mm.attr.cat)];
+                            } catch (er) {
+                                page = null;
+                                // console.warn(' ... metrics failed to id a page based on an existing selector (no attributes present)');
+                            }
+                        };
+                    });
+                };
+            });
+            return page;
+        }
+    }; /// end of metrics object
+
+    return metrics;
+
+}($boost, __boost__market, __boost__env, boost.Modernizr || null));
+
+if (__boost__market === 'uk' || __boost__market === 'us' || __boost__market === 'jp' || __boost__market === 'global' || __boost__market === 'br' || __boost__market === 'fr'|| __boost__market === 'de'|| __boost__market === 'es'|| __boost__market === 'it'|| __boost__market === 'ru') {
+    console.info('.......... what metrics market? ', __boost__market);
+    $boost.subscribe('boost.metrics.init', boost.metrics.setup);
+};
+
+var boostMetrics = {
+    sendData : function(){
+        // console.trace();
+        $boost.subscribe('boost.metrics.requested', function(){
+           $boost.publish('boost.metrics.assign.clicks', boostMetrics.clicktracking);
+        });
+        $boost.subscribe('boost.metrics.requested', function(){
+            $boost.publish('boost.metrics.assign.delegates', [boostMetrics.clickdelegates]);
+            $boost.unsubscribe('boost.metrics.requested');
+        });
+    },
+    clicktracking : {
+        seeBoostButton : {
+            selectors : '#screen0 a.seeboost',
+            tagType : 'element',
+            id : 'BOOST|MAIN|SEE_BOOST',
+            cat : 'BOOST|MAIN'
+        }
+        ,viewmens : {
+            selectors : 'a.viewmens, #mensexample',
+            tagType : 'element',
+            id : 'BOOST|COLORS|VIEW_MENS',
+            cat : 'BOOST|COLORS'
+        }
+        ,viewwomens : {
+            selectors : 'a.viewwomens, #womensexample',
+            tagType : 'element',
+            id : 'BOOST|COLORS|VIEW_WOMENS',
+            cat : 'BOOST|COLORS'
+        }
+        ,gotoscreena : {
+            selectors : '#gotoscreen1',
+            tagType : 'element',
+            id : 'BOOST|BOTTOM|',
+            cat : 'BOOST|BOTTOM'
+        }
+    },
+    // delegates don't work all the time. sometimes there's an event.preventDefault() that will
+    //      keep them from working, or the selector is just insane so the document click
+    //      doesn't register on the event.target where you want it.
+    // SOOOO ... you must test every one, and decide if it should be moved to
+    //  clicktracking object above
+    //  ONLY use clicktracking if the delegation item doesn't work; its extra event handlers
+    clickdelegates : [
+        {
+            selectors : '#caption00 h1',
+            tagType : 'element',
+            id : 'BOOST|MAIN',
+            cat : 'BOOST'
+        }
+        ,{
+            selectors : '#ballvideo',
+            tagType : 'element',
+            id : 'BOOST|MAIN|WATCH_VIDEO',
+            cat : 'BOOST|MAIN'
+        }
+        ,{
+            selectors : '#screen0 a.watchvideo',
+            tagType : 'element',
+            id : 'BOOST|MAIN|WATCH_VIDEO',
+            cat : 'BOOST|MAIN'
+        }
+        // ,{ // just a click, not a mouseover ... 
+        //     selectors : '.addthis_button',
+        //     tagType : 'element',
+        //     id : 'BOOST|SHARE',
+        //     cat : 'BOOST'
+        // }
+        ,{
+            selectors : 'span.at16nc',
+            tagType : 'element',
+            id : 'BOOST|SHARE|',
+            cat : 'BOOST|SHARE'
+        }
+        ,{
+            selectors : '#slide01 .bigcta h3',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|EXPLORE_BOOST',
+            cat : 'BOOST|PRODUCT_DETAIL'
+        }
+        ,{
+            selectors : '#slide03_tophs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_3|TOP_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide03_btmhs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_3|BOTTOM_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide04_tophs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_4|TOP_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide04_midhs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_4|MIDDLE_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide04_btmhs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_4|BOTTOM_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide05_tophs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_5|TOP_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide05_lefths',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_5|LEFT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide05_righths',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_5|RIGHT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide05_btmhs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_5|BOTTOM_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide06_tophs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_6|TOP_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#slide06_btmhs',
+            tagType : 'element',
+            id : 'BOOST|PRODUCT_DETAIL|SLIDE_6|BOTTOM_PLUS',
+            cat : 'BOOST|PLUS'
+        }        
+        ,{
+            selectors : '#look01 .bigcta h3',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|EXPLORE_BOOST',
+            cat : 'BOOST|APPAREL_LOOKBOOK'
+        }
+        ,{
+            selectors : '#look01 .bigcta h3',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|EXPLORE_BOOST',
+            cat : 'BOOST|APPAREL_LOOKBOOK'
+        }
+        ,{
+            selectors : '#look01_tophs',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|TOP_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look01_lefths',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|LEFT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look01_righths',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|RIGHT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look01_btmhs',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|BOTTOM_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look02_tophs',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_2|TOP_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look02_midhs',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_2|MIDDLE_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look02_btmhs',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_2|BOTTOM_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look03_lefths',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_3|LEFT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look03_righths',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_3|RIGHT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look04_tophs',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_4|TOP_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look04_lefths',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_4|LEFT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#look04_righths',
+            tagType : 'element',
+            id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_4|RIGHT_PLUS',
+            cat : 'BOOST|PLUS'
+        }
+        ,{
+            selectors : '#screen4 .readmore',
+            tagType : 'element',
+            id : 'BOOST|REVIEWS|READ_MORE',
+            cat : 'BOOST|REVIEWS'
+        }
+        ,{
+            selectors : '.twitter-follow-button',
+            tagType : 'element',
+            id : 'BOOST|GO_BOOST|FOLLOW',
+            cat : 'BOOST|GO_BOOST'
+        }
+        ,{
+            selectors : '#boost_like',
+            tagType : 'element',
+            id : 'BOOST|GO_BOOST|LIKE',
+            cat : 'BOOST|GO_BOOST'
+        }
+        
+        // {
+        //     selectors : '',
+        //     tagType : 'element',
+        //     id : '',
+        //     cat : ''
+        // }
+    ]
+}
+
+// fetch data we need in this case?
+boostMetrics.sendData();
+
+

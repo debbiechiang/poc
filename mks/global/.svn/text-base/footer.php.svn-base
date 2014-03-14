@@ -1,0 +1,37 @@
+<section class="stickyfooter">
+
+    <div class="semi-trans-footer"></div>
+    <div class="footer-links">
+        <div class="boost_brand_hash">
+            <span class="yellow">#boost</span>
+
+            <span class="social_btns">
+                <?php if($boostMarket == 'uk'): ?>
+                <a class="addthis_button share_btn" id="tray-share" addthis:url="http://www.adidas.com/uk/apps/boost/"><span class="plusicon"></span>Share</a>
+                <?php else: ?>
+                <a class="addthis_button share_btn" id="tray-share" addthis:url="http://www.adidas.com/com/apps/boost"><span class="plusicon"></span>Share</a>
+                <?php endif; ?>
+            </span>
+
+            <span class="tray-border"></span>
+        
+        <div class="footer_shop_btn">
+            
+            <?php if($boostMarket == 'uk'): ?>
+                <a class="yel_btn small" href="http://www.adidas.co.uk/getboost?cm_sp=BOOST-_-Bottom-_-SHOP_BOOST">SHOP BOOST<span></span></a>
+            <?php else: ?>
+                <a class="yel_btn small" href="http://www.adidas.com/go/boost?cm_sp=BOOST-_-Bottom-_-SHOP_BOOST">GET BOOST<span></span></a>
+            <?php endif; ?>
+                                           
+        </div>
+    </div>
+    </div>
+    <div class="tray-link-wrp">
+    <a class="next-section-link-holder" href="#screen1">
+        <span>Product Detail</span>
+        <span class="black-down-cta-icon"></span>
+    </a>
+    </div>
+
+</section>
+<!-- /stickyfooter -->

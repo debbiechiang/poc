@@ -1,0 +1,2248 @@
+
+// Protection in case console.tracer.js is removed
+var Tracer = Tracer || {};
+    Tracer.console = Tracer.console || {};
+    Tracer.console.pause = Tracer.console.pause || function(){};
+
+// disable console logging
+// Tracer.console.pause();
+// remove all console logging
+// Tracer.console.kill();
+
+// handlebars template helper, for the Reviews
+Handlebars.registerHelper('indexer', function(item){
+    var countRows = item + 1;
+    if (countRows > 3) {
+        return countRows - 3;
+    } else {
+        return countRows;
+    };
+});
+
+Handlebars.registerHelper('tagHandler', function(context, block){
+    var totalTags = context.length;
+    var ret = '';
+    var maxTags = 2;
+
+    function handleNormal(normalcontext, block){
+        // this is just #each
+        for (var i = 0, j = normalcontext.length; i<j; i++){
+            ret = ret + block.fn(normalcontext[i]);
+        }
+        return ret;
+    }
+
+    function handleExtra(extracontext, block){
+        ret = ret + "<li class='tagsmore roundCorners' style='opacity: 1; text-align:center; cursor:pointer; width: 10px;><span class='otherTagsNumber'>+" + extracontext.length + "</span><ul class='moreList roundCorners' style='display: none; width: 123px;'>"; 
+        handleNormal(extracontext, block);
+        ret = ret + "<div class='tag_bubble_arrow'></div></ul></li>"; 
+        return ret;
+    }
+
+    if (totalTags > maxTags){
+        var extraTags = context.slice(maxTags);
+        var normalTags = context.slice(0,maxTags);
+        handleNormal(normalTags, block);
+        handleExtra(extraTags, block);
+    } else {
+        handleNormal(context, block);
+    }
+
+    return new Handlebars.SafeString(ret);
+});
+
+// no var statement here anymore since it's been moved to modernizr.boost.js
+// boost namespace
+;boost = (function($, _market, boostModernizr, _env){
+
+    // we import Modernizr or a copy of Modernizr from modernizr.boost.js
+    var modernizr = boostModernizr;
+
+    var boostMarket = (function(market){
+        // add class to html tag based on market id from adi's .php
+        $('html').addClass(market);
+        return market;
+    }(_market));
+
+    // global config and settings
+    var vars = {
+        DEBUG: true,
+        useHeroPreroll: true,
+        usePlayer: 'youtube',
+        useReviews: true,
+        slideHeight: 800,
+        headerHeight: 0,
+        winW: $(window).width(),
+        winH: $(window).height(),
+        absLeft: ($(window).width() - 950) / 2, // the distance from the left edge to the content well
+        pos: 0,
+        hsLoaded: false, // are the lookbook hotspots loaded?
+        urls: {
+            // reviews query urls
+            local: 'js/allin/boostquery.js',
+            dev: '//hp.dev.brandservices.adidas.com/pc',
+            // dev: '//hp.brandservices.adidas.com/pc', // testing prod against dev
+            qa: '//hp.qa.brandservices.adidas.com/pc',
+            prod: '//hp.brandservices.adidas.com/pc',
+            reviewsQuery: '/allaccess/jsonp/?callback=?&page=global/boost_news/0/6',
+            // reviewsQuery: '/allaccess/jsonp/?callback=?&page=posts/{market}/+-%28-expirationDate%3A%5B2012-06-07T12%3A02%3A40Z+TO+%2A%5D+OR+expirationDate%3A%5B%2A+TO+%2A%5D+OR+-expirationDate%3A%221-01-01T00%3A00%3A00Z%22%29+AND+-%28-displayDate%3A%5B%2A+TO+2012-06-07T12%3A02%3A40Z%5D+OR+displayDate%3A%5B%2A+TO+%2A%5D+OR+-displayDate%3A%221-01-01T00%3A00%3A00Z%22%29/6/0/publishDate+desc/',
+            
+
+            flag : (function(env){
+                if (env === 'dev') { // handling special local dev cases
+                    var url = location.href.toLowerCase();
+                    var localServer = (url.indexOf('local') > -1 || url.indexOf('user') > -1) ? true : false;
+                    if (localServer) {
+                        return 'dev'; //'local' or 'dev' to override
+                    } else {
+                        return env;
+                    }
+                } else {
+                    return env;
+                }
+            }(_env)),
+            ytiframeresrc: '//www.youtube.com/iframe_api',
+            addthis: '//s7.addthis.com/js/250/addthis_widget.js'
+        },
+        preload: true // set to false to disable the preloader.
+    }; // vars {}
+
+    // Init func
+    var init =  function() {
+        debug.setup();
+        debug.jq('init');
+        
+        boost.preloader.init();
+        boost.events.init();
+        boost.rAF();
+        boost.loader.init();
+        boost.inView();
+        boost.style.init();
+        boost.carousel();
+        boost.animate();
+        boost.poxIn.bind();
+        boost.tray.init();
+        boost.colors.init();
+        boost.reviews.init();
+        boost.ytiframe.init();
+
+        // load social plugins after video has started to play
+        // ******** we also need to call this code when the user scrolls ... what's the first thing done when you scroll?
+        $.subscribe('boost.youtube.playing', boost.social.addthis);
+
+        // fire external library
+        $.publish('boost.balldrop.init', {
+            useHeroPreroll : boost.vars.useHeroPreroll,
+            usePlayer : boost.vars.usePlayer
+        });
+
+        // two options for localized JS (doubt you'd use more than one)
+        // (a) we listen to them if they want us to load a file
+        // will load a file ./mks/[market]/script.js
+        $.subscribe('boost.localize.load.market.js', boost.localize.jsload);
+        $.subscribe('boost.localize.load.market.css', boost.localize.cssload);
+
+        // (b) we tell them to execute a script
+        //  example in js/boost.localize.sample.js
+        $.publish('boost.localize.scripts');
+        // call metrics script execution
+        $.publish('boost.metrics.init');
+        // boost.loadVideoOverlay();
+
+        // Delegate .transition() calls to .animate()
+        // if the browser can't do CSS transitions.
+        if (!$.support.transition)
+          $.fn.transition = $.fn.animate;
+    }; // init()
+
+    // debugging
+    var debug = {
+        setup : function(){
+            if (boost.vars.urls.flag === 'prod') {
+                if (location.search.indexOf('debugboost') === -1) {
+                    boost.vars.DEBUG = false;
+                } else {
+                    boost.vars.DEBUG = true; // override
+                };
+            };
+        },
+        jq : (function(src){
+            var configed = false;
+            if (!configed){
+                configed = true;
+                return function(src){
+                    if (boost.vars.DEBUG === false) {
+                        // console.log('console paused by boost app');
+                        Tracer.console.pause();
+                    } else {
+                        // console.groupCollapsed(src + ' jQuery debugging');
+                        //     console.log('app env code: ', boost.vars.urls.flag);
+                        //     console.log('jquery version: $:', $.fn.jquery);
+                        //     console.log('$boost: ', $boost.fn.jquery);
+                        //     console.log('window.$: ', window.$.fn.jquery);
+                        //     console.log('jQuery.fn.jquery: ', jQuery.fn.jquery);
+                        // console.groupEnd();
+                    };
+                };
+            }
+        }())
+    }
+
+    var poxIn = {
+        init: function(activeslide) {
+        debug.jq('poxIn');
+       /*
+           var $hotspotArray = $container.children('.boosths');
+            var i = 0;
+
+            function pox(i, callback) {
+                if (i < $hotspotArray.length) {
+                    $hotspotArray.eq(i).show();
+                    i++;
+                    setTimeout(function() {
+                        pox(i, callback);
+                    }, i * 75);
+                } else {
+                    callback();
+                }
+            }
+
+            setTimeout(function() {
+                pox(i, function() {});
+            }, 500);
+        */
+
+            boost.poxIn.delayabit(activeslide);
+            boost.poxIn.activatetophs(activeslide);
+        },
+        bind: function(){
+            $(".hs_cta").click(function() {
+                $(this).parent('.boosths').toggleClass("active");
+            });
+        },
+        delayabit: function(activeslide) {
+            setTimeout((function() {
+                activeslide.find('.boosths').each(function(i) {
+                    $(this).delay(i * 300).transition({
+                        'opacity': '1'
+                    }, 500, 'linear');
+                });
+            }), 200);
+        },
+        activatetophs: function(activeslide) {
+            setTimeout((function() {
+                activeslide.find('.boosths:last-child').addClass('active');
+            }), 1200);
+        }
+    }; // poxIn()
+
+    var inView = function(){
+        var inViewSelectors = '.mensboost, .womensboost, #screen0, #screen1, #screen2, #screen3, #screen4, #screen5';
+        $(inViewSelectors).on('inview', function(event, visible) {
+                if (visible === true) {
+                    $(this).addClass('inview');
+                } else {
+                    $(this).removeClass('inview');
+                }
+            }
+        );
+    }; // inView()
+
+    var rAF = function() {
+        debug.jq('rAF');
+        /**
+         * Provides requestAnimationFrame in a cross browser way.
+         * @author paulirish / http://paulirish.com/
+         */
+        if (!window.requestAnimationFrame) {
+            window.requestAnimationFrame = (function() {
+                return window.webkitRequestAnimationFrame ||
+                    window.mozRequestAnimationFrame ||
+                    window.oRequestAnimationFrame ||
+                    window.msRequestAnimationFrame ||
+                    function( /* function FrameRequestCallback */ callback, /* DOMElement Element */ element) {
+                        window.setTimeout(callback, 1000 / 60);
+                    };
+            })();
+        }
+    }; // rAF();
+
+    var style = {
+        orig: {
+            shoePos: {
+                width: 925,
+                top: 200,
+                backgroundSize:'contain'
+                //left: boost.vars.absLeft + 50
+            },
+            flare0Pos: {
+                top: 10
+                //left: boost.vars.absLeft + 450
+            },
+            flare1Pos: {
+                top: 140
+                //left: boost.vars.absLeft + 20,
+               // backgroundSize: 700
+            },
+            flare2Pos: {
+                top: 210
+                //left: boost.vars.absLeft - 200,
+               // backgroundSize: 700
+            }
+        },
+        blowout: {
+            shoePos: {
+                width: 1300,
+                top: -290,
+                backgroundSize:'contain'
+                //left: boost.vars.absLeft -230
+            },
+            flare0Pos: {
+                top: -300,
+                left: 0
+            },
+            flare1Pos: {
+                top: -110,
+                left: -245
+               // backgroundSize: 800
+            },
+            flare2Pos: {
+                top: -350,
+                left: -327
+                //backgroundSize: 900
+            }
+        },
+        initPos: [
+            {
+                el: '#slide03 .slidehero',
+                pos: -60, 
+                proper: 'left'
+            }, {
+                el: '#slide04 .slidehero',
+                pos: 0,
+                proper: 'left'
+            }, {
+                el: '#slide05 .slidehero',
+                pos: 255,
+                proper: 'left'
+            }, {
+                el: '#slide06 .slidehero',
+                pos: 395,
+                proper: 'left'
+            }, {
+                el: '.lookbook .slidehero',
+                pos: -485,
+                proper: 'left'
+            }, {
+                el: '#ballvideo',
+                pos: 280,
+                proper: 'left'
+            }, {
+                el: '#productpagination',
+                pos: 415,
+                proper:'left'
+            }
+        ],
+        init: function(){
+            if ($('.stickyHeader').length){
+                boost.vars.headerHeight = 110;
+            } else if ($('.pt_storefront').length){
+                if ($.browser.msie && document.documentMode < 9){
+                    boost.vars.headerHeight = $('.header-slide-panel-wrapper').height() + $('#header .wrapper').height();
+                }else {
+                    boost.vars.headerHeight = $('.pt_storefront').height();
+                }
+            }else if ($('header').length){
+                boost.vars.headerHeight = $('header').height();
+            }
+
+            boost.style.update();
+            boost.style.positionHero('.movingshoe', 'orig');
+
+            $('.watchvideo').css('left',664-$('.watchvideo').width()/2);
+
+            // methods for docking and floating content
+
+            $.fn.dockTo = function(options){
+                var defaults = {
+                    'position': 'fixed'
+                };
+                var opt = $.extend(defaults, options);
+                var $el = $(this);
+                $el.each(function() {
+                    $(this).css(opt);
+                });
+            };
+
+            boost.style.alignIt($('.mensredshoe'), 0, 'left');
+
+           
+        }, // boost.style.init();
+
+        reset: function() {
+            boost.vars.hsLoaded = false;
+            $('.boosths').css('opacity',0).removeClass('active');
+            $('#screen1').removeClass('slideshowView');
+
+            boost.colors.resetColorSplit();
+            $('.carousel').trigger('slideToPage', [0, {
+                fx: 'none',
+                onBefore: function() {
+                    $('.cloneholder02').addClass('hidden');
+                    $('#shoeprev').addClass('inactive');
+                },
+                onAfter: function() {
+                    boost.style.positionHero('.movingshoe','orig');
+                    $('.movingshoe').removeClass('hidden');
+                    $('#caption01').fadeIn();
+                }
+            }]);
+            $('.lookbook').trigger('slideToPage', [0, {
+                fx: 'none',
+                onBefore: function() {
+                    $('#lookprev').addClass('inactive');
+                },
+                onAfter: function() {
+                
+                }
+            }]);
+
+        }, // boost.style.reset();
+
+        update: function() {
+            debug.jq('style');
+
+            /* The max window width is 1920px and the content well is 950px wide. The content well always stays centered
+             * in the visible window area. Decorative elements are fixed relative to that 950px content well; having a wider
+             * browser window will reveal more of the hero shoe, but the shoe will always stay centered in the viewport. In other words,
+             * there is always a point in the image that will overlap the left edge of the content well. This is set manually and is a pain,
+             * but hopefully only once.
+             *
+             * Everything that needs to be called on browser resize goes here.
+             */
+
+            // updating the universal vars
+            var absLeft = boost.vars.absLeft = ($(window).width() - 950) / 2;
+            boost.vars.winW = $(window).width();
+            boost.vars.winH = $(window).height();
+            // updating the hero positions that depend on absLeft
+            boost.style.orig.shoePos.left = absLeft + 50;
+            boost.style.orig.flare0Pos.left = absLeft + 450;
+            boost.style.orig.flare1Pos.left = absLeft + 20;
+            boost.style.orig.flare2Pos.left = absLeft - 200;
+            boost.style.blowout.shoePos.left = absLeft - 230;
+
+            // update the distance that the men's shoe has to go in the colors transition
+            boost.colors.kickoffscreen = '+='+ (boost.vars.winW - boost.vars.absLeft) + 'px';
+
+            // update the product slide hero and lookbook image positions
+            for (var i = 0; i < boost.style.initPos.length; i++) {
+                boost.style.alignIt($(boost.style.initPos[i].el), boost.style.initPos[i].pos, boost.style.initPos[i].proper);
+            }
+
+            // update the hero shoe transitions
+            boost.style.positionHero('.cloneholder01', 'orig');
+            boost.style.positionHero('.cloneholder02', 'blowout');
+
+            if(!$('.movingshoe').hasClass('hidden')){
+                if ($('#screen1').hasClass('slideshowView')){
+                    boost.style.positionHero('.movingshoe', 'blowout');
+                }else {
+                    boost.style.positionHero('.movingshoe', 'orig');
+                }
+            }
+            // @todo: generalize this part.
+            $('.wiperight').css({
+                width: boost.vars.winW/2 + 10,
+                top: boost.vars.headerHeight
+            });
+            $('#splitscreenhero').css({
+                marginLeft: boost.vars.absLeft -520
+            });
+
+            if (!(boost.colors.mensscreen.hasClass('seen')) && !(boost.colors.womensscreen.hasClass('seen'))){
+                // Only do this if the main color splitscreen is showing, or else it'll show the main screen underneath the
+                // other visible one.
+                $('.menssidewiper').css({
+                    width: boost.vars.winW/2 + 40
+                });
+                boost.style.alignIt($('.mensredshoe'), 0, 'left');
+                $("#womensexample").css({
+                    left:boost.vars.winW/2
+                });
+            }
+
+
+            $('.movingshoe').css({
+                'max-width': boost.vars.winW + 'px'
+            });
+
+            $('.screen, .caroufredsel_wrapper').css({
+                'width': boost.vars.winW
+            });
+
+            $('.backdrop').css({
+                'width': boost.vars.winW + 40
+            });
+            
+        }, // boost.style.update()
+
+        alignIt: function($el, fixedX, proper){
+            $el.each(function() {
+                $(this).css(proper, boost.vars.absLeft + fixedX + 'px');
+            });
+        }, // boost.style.alignIt()
+
+        positionHero: function(el, group){
+            var $el = $(el);
+            $el.find('.heroshoe').css(boost.style[group].shoePos);
+            $el.find('.hero00').css(boost.style[group].flare0Pos);
+            $el.find('.hero01').css(boost.style[group].flare1Pos);
+            $el.find('.hero02').css(boost.style[group].flare2Pos);
+        }, // boost.style.positionHero()
+
+        animateHero: function(el, group, duration){
+            var $el = $(el);
+            $el.find('.heroshoe').transition(boost.style[group].shoePos, duration);
+            $el.find('.hero00').transition(boost.style[group].flare0Pos, duration);
+            $el.find('.hero01').transition(boost.style[group].flare1Pos, duration);
+            $el.find('.hero02').transition(boost.style[group].flare2Pos, duration);
+        } // boost.style.animateHero()
+    }; //style();
+
+    // Carousel
+    var carousel = function() {
+        debug.jq('carousel');
+
+
+        // carouFredSel settings object
+        //  object is fed to the $('.carousel').carouFredSel(fredSettings, fredOptions);
+        //  once set up
+        var fredSettings = {
+            height: 800,
+            width:boost.vars.winW,
+            responsive:true,
+            circular: false,
+            infinite: true,
+            align: 'left',
+            auto: {
+                play: false
+            },
+            scroll: {
+                fx: 'scroll',
+                duration:400
+            },
+            items: {
+                visible: 1,
+                width: boost.vars.winW
+           },
+           onCreate: function() {
+                // console.log('..... fredSettings ');
+                    var goingTo = $('.carousel').triggerHandler('currentPage');
+                    if (goingTo===0){$('#shoeprev').addClass('inactive');}
+                    
+                    $(this).parents('.screen').addClass('showing-slide-0');
+            },
+            prev: {
+                button: $('#shoeprev'),
+                onBefore: function(data) {
+                    $('body').scrollTo(boost.vars.slideHeight, 200);
+                    var goingTo = $('.carousel').triggerHandler('currentPosition') || 0;
+                    
+                    // Add a "showing-slide-#' class to the parent <section> for CSS purposes
+                    // (after removing any existing showing-slide-# class)
+                    $(this).parents('.screen').removeClass(function(i, c){
+                        return (c.match(/showing-slide-[0-9]+/ig) || []).join(' ');
+                     }).addClass('showing-slide-' + goingTo);
+
+                    //console.log('PrevdTo: '+ goingTo);
+                    switch (goingTo) {
+                        case 0:
+                            if (data.items.old[0].id == 'slide02'){
+                                //if going backwards from slide 2 to 1
+                                boost.style.positionHero('.movingshoe', 'blowout');
+                                $('.movingshoe').removeClass('hidden');
+                                $('.cloneholder01, .cloneholder02').addClass('hidden');
+                                boost.style.animateHero('.movingshoe', 'orig', 1000);
+                            }else {
+                                $('.movingshoe').addClass('hidden');
+                                boost.style.positionHero('.movingshoe', 'orig');
+                                if(!$.browser.msie || document.documentMode > 8)
+                                    $('.cloneholder01').removeClass('hidden');
+                            }
+                            break;
+                        default:
+                            $('#screen1').addClass('slideshowView');
+                            $('.cloneholder02').removeClass('hidden');
+                             $('#productpagination').dockTo({
+                                'position': 'absolute'
+                            });
+                        break;
+                    }
+                    $boost.publish('boost.metrics.direct.calls', {
+                        tagType : 'element',
+                        id : 'BOOST|PRODUCT_DETAIL|SLIDE_' + (goingTo + 1),
+                        cat : 'BOOST|PRODUCT_DETAIL'
+                    });
+                },
+                onAfter: function(data) {
+                    var goingTo = $('.carousel').triggerHandler('currentPage');
+                    
+                    var $thisSlide;
+                    switch (goingTo) {
+                        case 0:
+                            $('#shoeprev').addClass('inactive');
+                            $('#caption01').fadeIn();
+                            $('.slideshowView').removeClass('slideshowView');
+                            $('.cloneholder02').addClass('hidden');
+
+                            if (data.items.old[0].id == 'slide02'){
+                            }else {
+                                //boost.style.positionHero('.movingshoe', 'orig');
+                                $('.movingshoe').removeClass('hidden');
+                                $('.cloneholder01').addClass('hidden');
+                            }
+                            break;
+                        case 1:
+                            $('#shoeprev').removeClass('inactive');
+                            $('.cloneholder02').removeClass('hidden');
+                            $('#productpagination').dockTo({
+                                'position': 'absolute'
+                            });
+                            break;
+                        default:
+                            $('#shoeprev').removeClass('inactive');
+                            $('#productpagination').dockTo({
+                                'position': 'absolute'
+                            });
+                            break;
+                    }
+
+                    boost.poxIn.init($('.carousel').triggerHandler('currentVisible'));
+                }
+            },
+            next: {
+                button: $('#shoenext'),
+                fx: 'scroll',
+                duration: 400,
+                onBefore: function() {
+                    $('body').scrollTo(boost.vars.slideHeight, 200);
+                    var goingTo = $('.carousel').triggerHandler('currentPosition') || 0;
+                    
+                    // Add a "showing-slide-#' class to the parent <section> for CSS purposes
+                    // (after removing any existing showing-slide-# class)
+                    $(this).parents('.screen').removeClass(function(i, c){
+                        return (c.match(/showing-slide-[0-9]+/ig) || []).join(' ');
+                     }).addClass('showing-slide-' + goingTo);
+
+                    
+                    
+                    switch (goingTo) {
+                        case 0:
+                            //$('.cloneholder02').addClass('hidden');
+                            boost.style.positionHero('.movingshoe', 'orig');
+                            $('.slideshowView').removeClass('slideshowView');
+                            break;
+                        case 1:
+                            $('#caption01').hide();
+                            $('#screen1').addClass('slideshowView');
+                            $('.cloneholder02, .cloneholder01').addClass('hidden');
+                            boost.style.animateHero('.movingshoe', 'blowout', 800);
+                            break;
+                        default:
+                            $('.movingshoe').addClass('hidden');
+                            $('.cloneholder02').removeClass('hidden');
+                            $('#screen1').addClass('slideshowView');
+                            break;
+                    }
+                    $boost.publish('boost.metrics.direct.calls', {
+                        tagType : 'element',
+                        id : 'BOOST|PRODUCT_DETAIL|SLIDE_' + (goingTo + 1),
+                        cat : 'BOOST|PRODUCT_DETAIL'
+                    });
+                },
+                onAfter: function() {
+                    var goingTo = $('.carousel').triggerHandler('currentPage');
+                                         
+                    var $thisSlide;
+                    switch (goingTo) {
+                        case 0:
+                             $('#shoeprev').addClass('inactive');
+                            $('#caption01').fadeIn(800);
+                            $('.movingshoe').removeClass('hidden');
+                            break;
+                        case 1:
+                             $('#shoeprev').removeClass('inactive');
+                            $('.cloneholder02').removeClass('hidden');
+                            break;
+                        default:
+                             $('#shoeprev').removeClass('inactive');
+                            $('.movingshoe').addClass('hidden');
+                            break;
+                    }
+                     boost.poxIn.init($('.carousel').triggerHandler('currentVisible'));
+                }
+
+            },
+
+            pagination: {
+                container: $('#productpagination'),
+                anchorBuilder: function(nr, item) {
+                    return '<a href="#' + nr + '">&nbsp;</a>';
+                }
+            }
+
+        }; // fredSettings {} object
+
+        // carouFredSel plugin options
+        var fredOptions = {
+            classnames: {
+                selected: 'active',
+                disabled: 'inactive'
+            }
+        }; // fredOptions {} object
+
+        // instantiate carouFredSel() with config options from above
+        $('.carousel').carouFredSel(fredSettings, fredOptions);
+
+        $('.bigcta').on('click', function() {
+            $(this).closest('.caroufredsel_wrapper').children().triggerHandler('nextPage');
+        });
+
+        $('.lookbook').carouFredSel({
+            height: 800,
+            circular: false,
+            responsive: true,
+            infinite: true,
+            align: 'left',
+            auto: {
+                play: false
+            },
+            items: {
+                visible: 1
+            },
+            onCreate: function() {
+                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
+                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
+            },
+            prev: {
+                button: $('#lookprev'),
+                fx: 'scroll',
+                duration: 400,
+                onBefore: function() {
+                    var goingTo = $('.lookbook').triggerHandler('currentPage');
+                    $boost.publish('boost.metrics.direct.calls', {
+                        tagType : 'element',
+                        id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_' + (goingTo + 1),
+                        cat : 'BOOST|APPAREL_LOOKBOOK'
+                    });
+                },
+                onAfter: function() {
+                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
+                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
+                        else{$('#lookprev').removeClass('inactive');}
+                    var activeslide = $('.lookbook').triggerHandler('currentVisible');
+                    delayabit = setTimeout((function() {
+                        activeslide.find('.boosths').each(function(i) {
+                            $(this).delay(i * 300).transition({
+                                'opacity': '1'
+                            }, 500, 'linear');
+                        });
+                    }), 200);
+                    activatetophs = setTimeout((function() {
+                        activeslide.find('.boosths:last-child').addClass('active');
+                    }), 1200);
+                }
+            },
+            next: {
+                button: $('#looknext'),
+                fx: 'scroll',
+                duration: 400,
+                onBefore: function() {
+                    var goingTo = $('.lookbook').triggerHandler('currentPage');
+                    $boost.publish('boost.metrics.direct.calls', {
+                        tagType : 'element',
+                        id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_' + (goingTo + 1),
+                        cat : 'BOOST|APPAREL_LOOKBOOK'
+                    });
+                    if (goingTo > 0){
+                        $('.lookbook .bigcta').dockTo({
+                           'position':'absolute',
+                           top:584,
+                           right:0
+                        });
+                    }
+                },
+                onAfter: function() {
+                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
+                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
+                        else{$('#lookprev').removeClass('inactive');}
+                    var activeslide = $('.lookbook').triggerHandler('currentVisible');
+                    delayabit = setTimeout((function() {
+                        activeslide.find('.boosths').each(function(i) {
+                            $(this).delay(i * 300).transition({
+                                'opacity': '1'
+                            }, 500, 'linear');
+                        });
+                    }), 200);
+                    activatetophs = setTimeout((function() {
+                        activeslide.find('.boosths:last-child').addClass('active');
+                    }), 1200);
+                }
+            },
+            pagination: {
+                container: $('#lookpagination'),
+                anchorBuilder: function(nr, item) {
+                    return '<a href="#' + nr + '">&nbsp;</a>';
+                },
+                onBefore: function() {
+                    var goingTo = $('.lookbook').triggerHandler('currentPage');
+                    $boost.publish('boost.metrics.direct.calls', {
+                        tagType : 'element',
+                        id : 'BOOST|APPAREL_LOOKBOOK|SLIDE_' + (goingTo + 1),
+                        cat : 'BOOST|APPAREL_LOOKBOOK'
+                    });
+                },
+                onAfter: function() {
+                    var activeslidenum = $('.lookbook').triggerHandler('currentPage');
+                    if (activeslidenum===0){$('#lookprev').addClass('inactive');}
+                    else{$('#lookprev').removeClass('inactive');}
+
+                    var activeslide = $('.lookbook').triggerHandler('currentVisible');
+                    delayabit = setTimeout((function() {
+                        activeslide.find('.boosths').each(function(i) {
+                            $(this).delay(i * 300).transition({
+                                'opacity': '1'
+                            }, 500, 'linear');
+                        });
+                    }), 200);
+                    activatetophs = setTimeout((function() {
+                        activeslide.find('.boosths:last-child').addClass('active');
+                    }), 1200);
+                }
+            }
+        }, {
+            classnames: {
+                selected: 'active',
+                disabled: 'inactive'
+            }
+        });
+    }; // carousel()
+
+    /* hotspot */
+    var initboosthotspots = function() {
+        debug.jq('initboosthotspots');
+
+        
+    }; // initboosthotspots()
+
+
+    var tray = {
+        //debug.jq('tray');
+        currScreen: 0,
+        previousSectionTitle: '',
+        titleArr: [],
+        metricsArr: ['', 'PRODUCT_DETAIL', 'COLORS', 'APPAREL_LOOKBOOK', 'REVIEWS', 'GO_BOOST'],
+        $trayLink: $('.next-section-link-holder'),
+        init: function(){
+            $('.next-section-link-holder, .wiperight .shoe01, .seeboost').click(function(e) {
+                e.preventDefault();
+                var target = $(this).attr('href');
+                boost.tray.scrollToSection(target);
+                return false;
+            });
+            boost.tray.buildArr();
+            // boost.tray.$trayLink.parent('.tray-link-wrp').attr({});
+            boost.tray.$trayLink.attr({'id' : 'gotoscreen1', 'href': '#screen1'}).html('<span>'+ boost.tray.titleArr[0].title +'</span><span class="black-down-cta-icon"></span>');
+        },
+        buildArr: function() {
+            $('.screen').each(function(i) {
+                var $this = $(this);
+                boost.tray.titleArr[i] = {
+                    'title': $this.data('title'),
+                    'id': '#' + $this.attr('id')
+                };
+            });
+            boost.tray.handleReviews();
+            // console.log(boost.tray.titleArr);
+
+        },
+        handleReviews: function() {
+            // probably no need to have this separate from buildArr()
+            if (boost.reviews.showing === false){
+                boost.tray.titleArr.splice(4,1);
+                boost.tray.metricsArr.splice(4,1);
+            }
+            boost.tray.updateText();
+        },
+        updateText: function(){
+            var screennumber = Math.floor((boost.pos+50)/boost.vars.slideHeight);
+
+            if ((screennumber !== boost.tray.currScreen) && screennumber < boost.tray.titleArr.length - 1){
+             //   boost.tray.$trayLink.parent('.tray-link-wrp').attr({);
+                boost.tray.$trayLink.attr({
+                    'id' : 'gotoscreen'+[screennumber+1],
+                    'href': boost.tray.titleArr[screennumber+1].id
+                })
+                .children('span:first-child').html(boost.tray.titleArr[screennumber+1].title);
+
+                if (boost.tray.metricsArr[screennumber].length){
+                    $boost.publish('boost.metrics.direct.calls', {
+                        tagType : 'element',
+                        id : 'BOOST|' + boost.tray.metricsArr[screennumber],
+                        cat : 'BOOST'
+                    });
+                }
+
+                boost.tray.currScreen = screennumber;
+
+                
+                //id + $($el).children('span').eq(0).text().toUpperCase().replace(/ /g, "_");
+            }
+        },
+        scrollToSection: function(target) {
+            $('body').scrollTo(target, 1000, {
+                easing: 'easeInCubic'
+            });
+            boost.tray.updateText();
+            return false;
+        }
+
+    }; // tray()
+
+    /* Men's and Women's Boost */
+    var colors = {
+        kickoffscreen: 0,
+        menssidewiper: $('.menssidewiper'),
+        mensexample: $('#mensexample'),
+        mensscreen: $('.mensboost'),
+        mensclone: $('.menssidewiper .clone'),
+        womensexample: $('#womensexample'),
+        womensscreen: $('.womensboost'),
+        header: $('#colors_bst h1'),
+
+        goToMens: function() {
+            boost.colors.header.hide();
+            boost.colors.menssidewiper.transition({
+                width: boost.vars.winW + 80
+            }, 400, 'easeInSine', function() {
+                $('#screen2').addClass('noBG');
+            });
+            boost.colors.mensexample.transition({
+                left: boost.colors.kickoffscreen
+            }, 540, 'easeInSine');
+            boost.colors.mensscreen.delay(300).transition({
+                left: 0
+            },600, function() {
+                $('.shoe_large img').removeClass('currentImg').hide();
+                $('.thumbs .actv').removeClass('actv');
+                if ($('#mens_black').hasClass('displayed')){
+                    $('#mens_black img').eq(0).css('display', 'block').addClass('currentImg');
+                    $('#mens_black .thumbs a').eq(0).addClass('actv');
+                } else {
+                    $('#mens_red img').eq(0).css('display', 'block').addClass('currentImg');
+                    $('#mens_red .thumbs a').eq(0).addClass('actv');
+                }
+            }).addClass('seen');
+
+        },
+        resetColorSplit: function() {
+
+            if (boost.colors.mensscreen.hasClass('seen')){
+                $('#screen2').removeClass('noBG');
+
+                boost.colors.mensclone.addClass('hidden');
+                boost.colors.menssidewiper.delay(100).transition({
+                    width: boost.vars.winW/2 + 40
+                }, 300, function() {
+                    boost.colors.header.show();
+                });
+                boost.colors.mensexample.show().transition({
+                    left: boost.vars.absLeft
+                }, 400);
+                boost.colors.mensscreen.transition({
+                    left:'-100%'
+                }, 300).removeClass('seen');
+            }else{
+                boost.colors.menssidewiper.delay(100).transition({
+                    width:boost.vars.winW/2 + 40
+                }, 300, function(){
+                    boost.colors.mensexample.show();
+                    boost.colors.mensclone.addClass('hidden');
+                    boost.colors.header.show();
+                });
+                boost.colors.womensexample.transition({
+                    left:boost.vars.winW/2
+                },400);
+                boost.colors.womensscreen.transition({
+                    left:2200
+                }, 300).removeClass('seen');
+            }
+        },
+        goToWomens: function() {
+            boost.colors.header.hide();
+            boost.colors.mensclone.removeClass('hidden');
+            boost.colors.mensexample.hide();
+            boost.colors.menssidewiper.transition({
+                width:0
+            }, 400);
+            boost.colors.womensexample.transition({
+                left: -500
+            },700);
+            boost.colors.womensscreen.transition({
+                left:0
+            },650, function() {
+                $('.shoe_large img').removeClass('currentImg').hide();
+                $('.thumbs .actv').removeClass('actv');
+                if ($('#womens_black').hasClass('displayed')){
+                    $('#womens_black img').eq(0).css('display', 'block').addClass('currentImg');
+                    $('#womens_black .thumbs a').eq(0).addClass('actv');
+                } else {
+                    $('#womens_teal img').eq(0).css('display', 'block').addClass('currentImg');
+                    $('#womens_teal .thumbs a').eq(0).addClass('actv');
+
+                }
+             }).addClass('seen');
+
+        },
+
+        init : function(){
+           // debug.jq('colors.init()');
+
+            var firstShoeFadeDuration = 200;
+            var firstMensBlackIndex = 'i5';
+            var firstMensRedIndex = 'i0';
+            var firstWomensTealIndex = 'i15';
+            var firstWomensBlackIndex = 'i10';
+            boost.colors.kickoffscreen = '+='+ (boost.vars.winW - boost.vars.absLeft) + 'px';
+
+            // view men's boost
+            $('.viewmens, .menssidewiper, .mensside').on("click", function(e) {
+                boost.colors.goToMens();
+                return false;
+            });
+
+            $('.backtoviewmens, .backtoviewwomens').on("click", function(e) {
+                boost.colors.resetColorSplit();
+                return false;
+            });
+
+            // view women's boost
+            $('.viewwomens, .womensside').on("click", function(e) {
+                boost.colors.goToWomens();
+                return false;
+            });
+
+            // control color pallete selection (black)
+            // @todo combine this and the code below to genericize color toggle
+            $('#mensblack').on("click", function() {
+                $('.mensboost').find('.color_pal').removeClass('active');
+                $(this).find('span.color_pal').addClass('active');
+                $('#mens_red').removeClass('displayed').addClass('hide');
+                $('#mens_black').removeClass('hide').addClass('displayed');
+
+               
+                $('#mens_red .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
+                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstMensBlackIndex + '"]').addClass('actv');
+                $('#mens_black .shoe_large').find('img.' + firstMensBlackIndex).addClass('currentImg').fadeIn('fast');
+               
+                return false;
+            });
+
+            // control color pallete selection (red)
+            // @todo combine this and the code above to genericize color toggle
+            $('#mensred').on("click", function() {
+                $('.mensboost').find('.color_pal').removeClass('active');
+                $(this).find('span.color_pal').addClass('active');
+                $('#mens_black').removeClass('displayed').addClass('hide');
+                $('#mens_red').removeClass('hide').addClass('displayed');                
+                $('#mens_black .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
+                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstMensRedIndex + '"]').addClass('actv');
+                $('#mens_red .shoe_large').find('img.' + firstMensRedIndex).addClass('currentImg').fadeIn('fast');                
+                return false;
+            });
+
+
+            $('#womensblack').on("click", function() {
+                $('.womensboost').find('.color_pal').removeClass('active');
+                $(this).find('span.color_pal').addClass('active');
+                $('#womens_teal').removeClass('displayed').addClass('hide');
+                $('#womens_black').removeClass('hide').addClass('displayed');               
+                $('#womens_teal .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
+                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstWomensBlackIndex + '"]').addClass('actv');
+                $('#womens_black .shoe_large').find('img.' + firstWomensBlackIndex).addClass('currentImg').fadeIn('fast');               
+                return false;
+            });
+
+            $('#womensteal').on("click", function() {
+                $('.womensboost').find('.color_pal').removeClass('active');
+                $(this).find('span.color_pal').addClass('active');
+                $('#womens_black').removeClass('displayed').addClass('hide');
+                $('#womens_teal').removeClass('hide').addClass('displayed');             
+                $('#womens_black .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
+                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstWomensTealIndex + '"]').addClass('actv');
+                $('#womens_teal .shoe_large').find('img.' + firstWomensTealIndex).addClass('currentImg').fadeIn('fast');
+                return false;
+            });
+        
+            var mainImg, currentImg;
+            
+            $(".shoe_large img").each(function(index, element) {
+                $(element).attr("class", 'i' + index);
+            });
+            $(".thumbs a").each(function(index, element) {
+                $(element).attr("rel", 'i' + index);
+            });
+           
+            // thumbnail clicking to show shoe
+            $('.thumbs a').click(function() {
+                $(this).parent().find('a').removeClass('actv');
+             
+               $(this).addClass('actv');
+                mainImg = $(this).attr('rel');
+                if (mainImg != currentImg) {
+                    $('.currentImg').fadeOut(20).removeClass('currentImg');
+                    $('.' + mainImg).fadeIn(200, function() {
+                        $(this).removeClass('hide').addClass('currentImg');
+                    
+                    }); 
+                    return false;
+                }
+                return false;
+            });
+
+        
+        }
+    }; // colors {}
+
+  
+    var animate = function() {
+        var $firstBG = $('#screen0'),
+            $secondBG = $('#screen1'),
+            $thirdBG = $('#screen2'),
+            $fourthBG = $('#screen3'),
+            $fifthBG = $('#screen4'),
+            $sixthBG = $('#screen5'),
+            $seventhBG = $('#screen6'),
+            ticking = false;
+
+        // Touch stuff
+        var touch = isTouch(),
+            // is touch device
+            touchStart = {
+                x: 0,
+                y: 0
+            },
+            scrollStart = 0,
+            incrementalScrollPos = finalScrollPos = 0; // vars for touch
+
+        /* INITIALIZE THE STYLING */
+        requestAnimationFrame(move);
+
+        // touch
+        function touchStartHandler(e) {
+            //e.preventDefault();
+            touchStart.x = e.touches[0].pageX;
+            // Store the position of finger on swipe begin:
+            touchStart.y = e.touches[0].pageY;
+            // Store scroll val on swipe begin:
+            scrollStart = finalScrollPos;
+        }
+
+        function touchMoveHandler(e) {
+            e.preventDefault();
+            offset = {};
+            offset.x = touchStart.x - e.touches[0].pageX;
+
+            // Get distance finger has moved since swipe begin:
+            offset.y = touchStart.y - e.touches[0].pageY;
+
+            // Add finger move dist to original scroll value
+            finalScrollPos = Math.max(0, scrollStart + offset.y);
+
+            $('h1').html(finalScrollPos);
+        }
+
+
+        function isBetween(pos, min, max) {
+            return (pos > min && pos < max);
+        }
+
+        function onScroll() {
+            boost.pos  = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+            //console.log(boost.pos);
+            isItTicking(function() {
+                requestAnimationFrame(move);
+            });
+            //$('#pos').html(latestScroll);
+        }
+
+        function onResize(){
+            isItTicking(function(){
+                boost.style.update();
+                requestAnimationFrame(move);
+                ticking = false;
+            });
+        }
+ 
+
+        function isItTicking(callback) {
+            if (!ticking) {
+                callback();
+                boost.tray.updateText();
+            }
+            ticking = true;
+        }
+
+        function move() {
+            ticking = false;
+            var pos = boost.pos;
+            var bv = boost.vars;
+            var winBottom = pos + boost.vars.winH;
+
+            if (pos === 0) {
+                boost.style.reset();
+            }
+
+            if ($('#screen5').hasClass('inview') || winBottom >4000){
+                $('.stickyfooter').addClass('hidden');
+            } else {
+                $('.stickyfooter').removeClass('hidden');
+                $('#tray-share').mousemove(function(e){
+                    $('#at15s').css({
+                        'position' : 'fixed',
+                        'top': boost.vars.winH -230,
+                        'left': boost.vars.absLeft + 30
+                    });
+                });
+            }
+
+
+            // @todo: generalize this docking section, this is totally not DRY. -- DC
+
+            // Product slideshow pagination + CTA
+            if (winBottom > 1300 && winBottom < 1600){
+                 $('#productpagination').dockTo({
+                    bottom:82,
+                    left: (boost.vars.winW - 121)/2
+                });
+            }else{
+                $('#productpagination').dockTo({
+                    'position': 'absolute'
+                });
+            }
+
+            if (winBottom > 1300 && winBottom < 1500 && $('.carousel').triggerHandler('currentPage') === 0){
+                $('.carousel .bigcta').dockTo({
+                    top:'auto',
+                    bottom:82,
+                    right:boost.vars.absLeft
+                });
+            }else {
+                $('.carousel .bigcta').dockTo({
+                   'position':'absolute',
+                   top:584,
+                   right:0
+                });
+            }
+
+
+            // Lookbook pagination + CTA
+            if (winBottom > 2850 && winBottom < 3200){
+              //  console.log('whee');
+                $('#lookpagination').dockTo({
+                    bottom:82,
+                    left: (boost.vars.winW - 86)/2
+                });
+            }else {
+                $('#lookpagination').dockTo({
+                    'position': 'relative',
+                    bottom: 'auto',
+                    left:'auto',
+                    'margin': '-100px auto 0'
+                });
+            }
+
+            if (winBottom > 2850 && winBottom < 3100  && $('.lookbook').triggerHandler('currentPage') === 0){
+                $('.lookbook .bigcta').dockTo({
+                    top:'auto',
+                    bottom:82,
+                    right:boost.vars.absLeft
+                });
+            }else {
+                $('.lookbook .bigcta').dockTo({
+                   'position':'absolute',
+                   top:584,
+                   right:0
+                });
+            }
+
+            // Carousel Arrows
+            if (boost.vars.winH < 800) {
+                if (winBottom > 1200 && winBottom < 1600){
+                    $('#shoeprev, #shoenext').addClass('docked');
+                }else {
+                    $('#shoeprev, #shoenext').removeClass('docked');
+                }
+
+                if(winBottom > 2744 && winBottom < 3200){
+                    $('#lookprev, #looknext').addClass('docked');
+                }else{
+                    $('#lookprev, #looknext').removeClass('docked');
+                }
+
+            }
+
+            if ($('#screen3').hasClass('inview')) {
+                if (!boost.vars.hsLoaded){
+                    $delayabit = setTimeout((function() {
+                        $('#look01').find('.boosths').each(function(ind) {
+                            $(this).delay(ind * 300).transition({
+                                'opacity': '1'
+                            }, 500, 'linear');
+                        });  $('#look01').find('.boosths').eq(3).delay(1000).addClass('active');
+                    }), 800);
+
+                    boost.vars.hsLoaded = true;
+                }
+            }
+
+            
+        } // move();
+
+        function isTouch() {
+            return 'ontouchstart' in window;
+        }
+
+
+        //console.log(touch);
+        if (touch === false) {
+            if (window.addEventListener){
+                window.addEventListener('scroll', onScroll, false);
+                window.addEventListener('resize', onResize, false);
+            } else if (window.attachEvent){
+                window.attachEvent('onscroll', onScroll, false);
+                window.attachEvent('onresize', onResize, false);
+            }
+        } else {
+        /*
+            $(window)._scrollable();
+            window.'addEvent'Listener('touchstart', touchStartHandler, true);
+            window.addEventListener('touchmove', touchMoveHandler, true);
+            window.addEventListener('touchend', touchEndHandler, true);
+        */
+        }
+    }; // animate()
+
+    var preloader = {
+        loadOffset: 0,
+        imgsLoaded: false,
+        offsetsLoaded: false,
+        progressbar: document.getElementById('progressbar'), // progressbar polyfill doesn't like it if this is a jQuery obj
+        progressoverlay: $('#progressoverlay'),
+        imgArray: [
+            'img/boost-sprite.png',
+            'img/globalNav.png',
+            'img/ball.jpg',
+            'img/splitscreenhero2.png',
+            'img/hero/shoe-unskewed.png',
+            'img/hero/behind_2.png',
+            'img/hero/behind_3.png',
+            'img/hero/behind_4.png',
+            'img/shoe-slide-01.png',
+            'img/shoe-slide-02.png',
+            'img/shoe-slide-03-1.png',
+            'img/shoe-slide-03-2.png',
+            'img/shoe-slide-03-3.png',
+            'img/shoe-slide-04.png'
+        ],
+        offSetConfig : [
+            {
+                name : 'balldrop',
+                toggle : 'useHeroPreroll',
+                val : 3
+            }
+        ],
+        getMax: function(){
+            return boost.preloader.imgArray.length + boost.preloader.loadOffset + 1;
+        },
+        setOffsets: function(){
+            // this is a hack, ideally we would iterate over boost.preloader.offSetConfig[]
+            if (boost.vars[boost.preloader.offSetConfig[0].toggle]) {
+                boost.preloader.loadOffset = boost.preloader.offSetConfig[0].val;
+            } else {
+                boost.preloader.loadOffset = 0;
+            }
+            if (boost.preloader.loadOffset === 0) {
+                boost.preloader.offsetsLoaded = true;
+            }
+        },
+        init: function() {
+            boost.preloader.setOffsets();
+
+            if (boost.vars.preload === false){
+                boost.preloader.progressoverlay.hide();
+            }else {
+                boost.preloader.progressbar.max = boost.preloader.getMax();
+                boost.preloader.preload(boost.preloader.imgArray);
+            }
+        },
+        finishLoader: function(){
+            // console.count('finishLoader');
+            if (boost.preloader.offsetsLoaded && boost.preloader.imgsLoaded) {
+                boost.preloader.progressbar.value = boost.preloader.getMax();
+                boost.preloader.progressoverlay.hide();
+            }
+        },
+        preload: function(assetArray) {
+            var totalloaded = 0;
+            // console.log('preloading called!');
+            $(assetArray).each(function() {
+                $(document.createElement('img')).load(function(){
+                    // console.log(this.src + " was loaded");
+                    totalloaded++;
+                    // console.log('total loaded: ' + totalloaded);
+                    boost.preloader.progressbar.value = totalloaded;
+                    if (totalloaded == boost.preloader.imgArray.length){
+                        // console.info('\t\t\t\t\timages loaded!!');
+                        boost.preloader.imgsLoaded = true;
+                        boost.preloader.finishLoader();
+                        // boost.preloader.progressoverlay.hide();
+                    }
+                }).attr('src', this.toString());
+            });
+        }
+    }; // preloader()
+
+    var reviews = {
+        // we use handlebars.js (in plugins.js) and an inline script-tag based template file
+        count : 0,
+        limit : 6,
+        // limit : 6,
+        checked : false,
+        $block : '#screen4',
+        $blockDiv : 'div.tilecontainer',
+        $triggerBlockPre : '#screen2',
+        $triggerBlockPost : '#screen5',
+        $templateBlock : '#reviewTemplate',
+        trigger : true,
+        sInView : false,
+        showing : false,
+        response : {},
+        dataToUse : [],
+        template : '',
+        templateWork : [],
+        // temp
+        checkInterval : null,
+
+        // check to see if the reviews are in view
+        checkReviewView : function(){
+            // console.count('checkReviewView');
+            if (!boost.reviews.showing && !boost.reviews.checked && boost.reviews.checkInterval === null) {
+                // console.log(this);
+                // @todo: replace this interval with something more robust tied to scrolling, etc.
+                boost.reviews.checkInterval = setInterval(function(){
+                    // console.count('checkReviewView interval called');
+                    if (boost.reviews.$triggerBlockPre.hasClass('inview') || boost.reviews.$triggerBlockPost.hasClass('inview')){
+                        if (boost.reviews.showing === false) {
+                            boost.reviews.loadReviews();
+                            clearInterval(boost.reviews.checkInterval);
+                            boost.reviews.checkInterval = null;
+                        }
+                    }
+                }, 500);
+                // logic to see if the thing is inView
+            }
+        },
+
+        // logic to load the reviews
+        loadReviews : function(){
+            // console.group('loadReviews()');
+            boost.reviews.fetchReviews(boost.reviews.successHandler);
+            boost.reviews.checked = true;
+        },
+
+        // count how many we have based on data feed response
+        getCount : function(data){
+            var howmany;
+                howmany = data.length;
+            if (howmany) {
+                return howmany;
+            } else {
+                return 0;
+            };
+        },
+
+        // jsonp callback
+        successHandler : function(data){
+            var br = boost.reviews;
+
+            br.response = data;
+            
+            // console.log('review data: ', br.response);
+
+            // Tracer.console.groupof('parseData()', br.parseData, [br, br.response], br);
+            br.parseData(br, br.response);
+        },
+
+        // tags are too complicated. offloading to this thing, just because ... 
+        handleTags : function(obj){
+            var item = [];
+            var x = 0;
+
+            // console.log('handleTags()', obj[0].tag);
+
+            while (x < obj[0].tag.length) {
+
+                // item.push(obj[0].tag[x].id[0].text);
+                item.push(obj[0].tag[x].label[0].text);
+                x++;
+            }
+
+            // console.log('handleTags result: ', item);
+
+            return item;
+        },
+
+        // pull only the data we need from the horribly formatted json we've got
+        //      so it's easier to iterate over
+        getFieldsFromData : function(fields, datarow){
+            var br = boost.reviews;
+            var x = 0;
+            var output = {};
+            var item = datarow.json.articleInfo[0]; // shortcut
+
+            // console.info('row?:', datarow);
+
+            if (!item) {
+                return output;
+            }
+
+            while (x < fields.length){
+
+                // if you need another field, be sure it's
+                // in fieldList in getDataSets()
+                // for the actual format of the json, see ./js/allin/news.json.js
+                switch (fields[x]) {
+                    case 'banner':
+                        output[fields[x]] = item.articleImages[0].tout_1_1Image[0].path[0].text;
+                        break;
+                    case 'tags':
+                        // this may need to be modified
+                        output[fields[x]] = br.handleTags(item.tags[0].categoryTags);
+                        break;
+                    case 'segmentTitle':
+                        output[fields[x]] = item.editorialSegmentTitle[0].tag[0].id[0].text;
+                        break;
+                    case 'articleTitle':
+                        output[fields[x]] = item.articleTitle[0].text;
+                        break;
+                    default: 
+                        output[fields[x]] = null;
+                        break;
+                }
+                x++;
+            }
+
+            // console.log('output from getFieldsFromData()', output);
+
+            return output;
+        },
+
+        // Go All In urls are defined by convension
+        // Take the articleId and creationDate from the Page Composer:
+        // <str name="articleId">p-running-boost-unveil-gai-news</str>
+        // <date name="creationDate">2013-02-12T14:49:04Z</date>
+         
+        // URL is created by convention:
+        // discover.adidas.de/goallin/news/2013/02/p-running-boost-unveil-gai-news/
+        // discover.adidas.de/goallin/news/$creationDate[0]/$creationDate[1]/{$articleId}/
+        //
+        // domain is another question...
+        makeUrlLink : function(data){
+            
+            // var domain = window.location.origin; // we may need a list of market specific all in domains
+            
+            // var domain = 'http://www.adidas.com';
+            var domain = location.origin;
+            // var market = '/' + _market;
+            var market = '';
+            var allInPath = 'goallin/news';
+            var month = data.creationDate.getMonth()+1;
+            var year = data.creationDate.getFullYear();
+            var articleId = data.articleId;
+            var url = domain + market + '/' + allInPath + '/' + year + '/' + month + '/' + articleId + '/';
+
+            // console.log('all in review url generated: ', url);
+
+            return url;
+        },
+
+        makeUrlTags : function(){
+            // var domain = window.location.origin; // we may need a list of market specific all in domains
+            
+            // var domain = 'http://www.adidas.com';
+            var domain = location.origin;
+            // var market = '/' + _market;
+            var market = '';
+            var allInPath = 'goallin/search';
+            var url = domain + market + '/' + allInPath + '/';
+
+            // console.log('tag url generated: ', url);
+
+            return url;
+        },
+
+        // here is step one of parsing
+        // for each row that's been returned to parseData()
+        // grab the appropriate fields and put them at the top level of the
+        // object we will iterate over with fieldList
+        getDataSets : function(dataArray){
+
+            // console.log('getDataSets() incoming: ', dataArray);
+
+            var br = boost.reviews;
+            var data = [];
+            var fieldData = {};
+            var temp = {};
+            var fieldList = ['banner', 'tags', 'segmentTitle', 'articleTitle'];
+
+            if (dataArray.length > 0) {
+                var x = 0;
+                while (x < dataArray.length) {
+
+                    fieldData = br.getFieldsFromData(fieldList, dataArray[x]);
+                
+                    if (typeof fieldData === 'object') {
+                        temp = {
+                            publishDate : $.timeago(dataArray[x].publishDate),      // used for UI display
+                            creationDate : new Date(dataArray[x].creationDate),     // used to make URL
+                            articleId : dataArray[x].articleId,                     // used to make URL
+                            tridionId : dataArray[x].tridionId
+                        }
+                        // goallin/search/ + tagname
+                        temp.allinurl = br.makeUrlLink(temp);
+                        temp.tagrooturl = br.makeUrlTags();
+                        $.extend(true, temp, temp, fieldData);
+                    } else {
+                        // console.warn('issue with data row: getDataSets()');
+                    };
+                    data.push(temp);
+                    x++;
+                
+                }
+            };
+
+             // console.log('output from getDataSets(): ', data);
+
+            return data;
+        },
+
+        // this is where the guts of the work is done
+        //      this checks for valid data, gets a count, returns an array of all the data
+        //      the array of data is a flattened version of the data so that 
+        //      our template code can iterate over it nicely.
+        parseData : function(br, data){
+            // verify real data
+            if (data.page.length && data.page.length > 0) {
+
+                var dataSet;
+                var dataObject = [];
+                var outputJson = {};
+
+                // double check data format
+                if (data.page[0].data.response.docs) {
+                    dataSet = data.page[0].data.response.docs;
+                } else {
+                    dataSet = null;
+                };
+
+                // does it look ok?
+                if (dataSet !== null) {
+
+                    br.count = br.getCount(dataSet);
+
+                    // enforce the limit we have set
+                    if (br.count > br.limit) {
+                        br.count = br.limit;
+                        dataSet = dataSet.slice(0, br.limit);
+                    };
+
+                    var i = 0;
+                    while (i < br.count) {
+
+                        outputJson = $.xml2json(dataSet[i].data, true);
+                        // console.log('json converted, row ', i, ' ', outputJson);
+                        dataSet[i].json = outputJson;
+
+                        i++;
+                    }
+
+                    dataObject = br.getDataSets(dataSet);
+                    
+                    br.dataToUse = br.makeArticleList(dataObject);
+                    br.addReviews(br.dataToUse);
+
+                } else {
+                    // console.warn('issue with parseData dataSet');
+                };
+
+            } else {
+                // console.log('boost.reviews.successHandler.parseData() found no pages?');
+            }
+        },
+
+        // this just makes iteration easier
+        makeArticleList : function(dataObject){
+
+            var articles = {
+                articles : dataObject
+            }
+
+            return articles;
+        },
+
+        // get a good environment relavent url
+        getUrlByEnv: function(_market, flag){
+
+            function baseUrl(flag){
+                if (flag === 'local') {
+                    return boost.vars.urls.local;
+                } else if (flag === 'dev') {
+                    return boost.vars.urls.dev;
+                } else if (flag === 'qa') {
+                    return boost.vars.urls.qa;
+                } else {
+                    return boost.vars.urls.prod;
+                };
+            };
+
+            var urlToUse = baseUrl(flag);
+
+            if (flag !== 'local') {
+                urlToUse = urlToUse + boost.vars.urls.reviewsQuery;
+
+                var marketToken = {
+                    market: _market
+                }
+                urlToUse = boost.reviews.replaceCurlyTokens(urlToUse, marketToken);
+            };
+
+             // console.log('******************* getUrlByEnv() to use : ', urlToUse);
+
+            return urlToUse;
+        },
+
+        // actual ajax
+        fetchReviews : function(callBack){
+            var br = boost.reviews;
+            var urlToUse = br.getUrlByEnv(boostMarket, boost.vars.urls.flag);
+            var datatype = (boost.vars.urls === 'local') ? 'json' : 'jsonp';
+
+            // console.log('reviews urlToUse: ', urlToUse);
+
+            $.ajax({
+                url : urlToUse,
+                dataType : datatype,
+                success : callBack
+            }).done(function(data){
+                // console.log(data);
+                boost.reviews.showReviews();
+            });
+
+            $(document).ajaxError(function(e){
+                console.log('ajaxError: ', e);
+            });
+        },
+
+        // hide / show reviews
+        showReviews : function(){
+            // console.log('showReviews()');
+            this.$block.slideDown(function(){
+                boost.reviews.showing = true;
+                boost.tray.buildArr();
+                boost.reviews.socialData.fetch();
+                boost.reviews.addInteraction();
+            });
+            // console.groupEnd();
+        },
+
+        // compile the template with the parser of choice
+        getCompiled : function(html){
+            return Handlebars.compile(html);
+        },
+
+        // getTemplate() html and call compile
+        getTemplate : function(){
+            var br = boost.reviews;
+            var template = br.$templateBlock.html();
+                template = br.getCompiled(template);
+            return template;
+        },
+
+        // a templating tool: string s, object d
+        // e.g. replaceCurlyTokens("hello {place} {yourName}", { place : "world", yourName : "Rob"});
+        replaceCurlyTokens: function(s, d) {
+            for (var p in d) {
+                s = s.replace(new RegExp('{' + p + '}', 'g'), d[p]);
+            }
+            return s;
+        },
+
+        // add the stuff to the divs, etc.
+        addReviews : function(dataToUse){
+            var br = boost.reviews;
+            var output = '';
+            var template = this.getTemplate();
+
+            // console.log('input: ', br.dataToUse);
+
+            output = template(br.dataToUse);
+
+            br.$block.find(br.$blockDiv).html(output);
+        },
+
+        addInteraction: function() {
+
+            $('.tagsmore').hover(function() {
+                $(this).children('.moreList').show();
+            }, function() {
+                $(this).children('.moreList').hide();
+            });
+        },
+
+        socialData : {
+            fetch : function(){
+                var br = boost.reviews;
+                var brs = br.socialData;
+
+                brs.brandViews();
+                brs.comments();
+            },
+            viewsresponse : {},
+            brandViews : function(){
+                var br = boost.reviews;
+                var brs = br.socialData;
+                var dataused = br.dataToUse.articles;
+    
+                // borrowed from adidas.com one site "go all in"
+                function comboBreaker(s_url) {
+                    var time = new Date().getTime();
+                    var random = Math.floor(Math.random() * 100000);
+
+                    var str = s_url + ((s_url.indexOf('?') == -1) ? '?' : '&') + 'cachebreak=' + time + random;
+                    return str;
+                };
+
+                // console.log('brandViews: ', dataused);
+
+                var ids = '';
+                var idarray = [];
+
+                // collect tridion IDs and the query string data for the request
+                $.each(dataused, function(i, valOf){
+                    idarray.push(dataused[i].tridionId);
+                    ids += ('ids[]=' + dataused[i].tridionId + '&');
+                });
+
+                // console.log("our tridion ids", ids, ids.length);
+                // remove trailing "&" (i know, i know...)
+                ids = ids.substring(0, ids.length-1);
+
+                // console.log(encodeURIComponent(ids));
+
+                // var allInDomain = 'http://www.adidas.com';
+                var allInDomain = location.origin;
+                // var allInDomain = 'http://hp.dev.brand.adidas.com';
+                var allInPath = '/goallin';
+                var viewService = '/ws/views';
+
+                var fulluri = allInDomain + allInPath + comboBreaker(viewService) + '&' + encodeURIComponent(ids)
+
+                // console.log('service paths?', fulluri);
+
+                // var fulluri = 'http://discover.adidas.co.uk/goallin/ws/views?cachebreak=136139440568643438&ids%5B%5D=tcm%3A65-17113&ids%5B%5D=tcm%3A65-17005&ids%5B%5D=tcm%3A65-17309&ids%5B%5D=tcm%3A65-17092&ids%5B%5D=tcm%3A65-17213'
+                // http://discover.adidas.de/goallin/ws/views?cachebreak=136094534527728878&ids%5B%5D=tcm%3A37-17092
+
+                var responseObjects = {};
+
+                $.ajax({
+                    url : fulluri,
+                    dataType : 'json',
+                    success: function(data){
+                        // console.log('views service response?', data);
+                        brs.viewsresponse = data;
+                    }
+                }).done(function(data){
+                    console.log('data from brs.viewsresponse', brs.viewsresponse);
+
+                    if (brs.viewsresponse.result) {
+                        $.each(idarray, function(i){
+                            // console.log('looking for keys', brs.viewsresponse.result.stories[idarray[i]]);
+
+                            try {
+                                responseObjects[idarray[i]] = brs.viewsresponse.result.stories[idarray[i]]
+                            } catch(e){
+                                responseObjects[idarray[i]] = 0;
+                            }
+                        });
+                    } else {
+                        // console.warn('no results for tridionIds');
+                    };
+
+                    // console.log('views results matched up: ', responseObjects);
+
+                    var $tiles = $('.tile');
+                    var $item;
+
+                    $.each(dataused, function(i){
+                        $item = null;
+                        $item = $tiles.find('span.views_count[rel="' + dataused[i].tridionId + '"]').find('span.numberOfViews');
+                        // console.log('found item?', $item, $item.size(), $item.get(0));
+                        // console.log('related tridion key?', responseObjects[dataused[i].tridionId])
+                        $item.html(responseObjects[dataused[i].tridionId]);
+                    });
+
+                })
+
+            },
+            pushComments : function(data){
+                var $tiles = $('.tile');
+                if ($tiles.size() === data.length) {
+
+                    $tiles.each(function(i, el){
+                        // console.log(el);
+                        $(el).find('span.numberOfComments').html(data[i]);
+                    });
+
+                } else {
+                    // console.warn('number of tiles?');
+                };
+            },
+            comments : function(){
+                /* e.g.
+                    http://comments.us1.gigya.com/comments.getStreamInfo?format=jsonp&sdk=js&APIKey=2_5bUiIFCM3q3I65O7j4Ybe_JGhAklhHiSHtrcK9Slez_3vIu9uO7R2-X3A-HamgHE&categoryID=news&streamID=2013%2F02%2Fp-running-boost-unveil-gai-news&callback=testCallBack
+                */
+                var br = boost.reviews;
+                var brs = br.socialData;
+                var dataused = br.dataToUse.articles;
+                var commentIds = [];
+                var splitter = "/news/";
+                var x = 0;
+                // urls
+                var serviceBase = "http://comments.us1.gigya.com/comments.getStreamInfo?format=jsonp&sdk=js&APIKey=";
+                var apiKey = "2_5bUiIFCM3q3I65O7j4Ybe_JGhAklhHiSHtrcK9Slez_3vIu9uO7R2-X3A-HamgHE";
+                var categoryId = "&categoryID=news&";
+                var streamId = "streamID=";
+                var callBack = "&callback=?";
+                var commentData = [];
+            
+                function getCommentsUrl(id){
+                    var url = '';
+                        url += serviceBase;
+                        url += apiKey;
+                        url += categoryId;
+                        url += (streamId + encodeURIComponent(id.split(splitter)[1]));
+                        // live example commented out
+                        // url += (streamId + encodeURIComponent('2012/12/uk-p-womenstraining-jessennis-nwsartcle'));
+                        url += callBack;
+                    return url;
+                }
+
+                // called for every ajax response on the service. when the max number of 
+                //  comment service responses are returned, then we pushComments();
+                $.subscribe('boost.reviews.comments.fetched', function(e, data){
+
+                    // console.log('data passed to the subscription?', data);
+
+                    if (data.length === commentIds.length) {
+                        // console.log('comments.fetched count (done)', data.length);
+                        boost.reviews.socialData.pushComments(data);
+                    } else {
+                        // console.log('comments.fetched count', data.length);
+                    };
+                })
+
+                // for each article that came back on the reviews, fetch the corresponding comment count
+                if (dataused.length > 0) {
+                    // console.log('length is long', dataused);
+                    // collect the ids
+                    while (x < dataused.length){
+                        commentIds.push(dataused[x].allinurl);
+                        x++;
+                    }
+
+                    // if we have a good collection ... 
+                    if (commentIds.length > 0) {
+
+                        x = 0;
+                        while (x < commentIds.length) {
+                            // this will be a series of ajax calls.
+                            //  for each response, we publish to announce it has finished
+                            //      since we can't just call another chunk of code we want
+                            //      them all so we check and wait
+                            $.ajax({
+                                url : getCommentsUrl(commentIds[x]),
+                                dataType : 'jsonp'
+                            }).done(function(data){
+                                // console.log('data back?', data);
+                                try {
+                                    commentData.push(data.streamInfo.commentCount);
+                                } catch (e) {
+                                    commentData.push(0);
+                                }
+                                $.publish('boost.reviews.comments.fetched', [commentData]); // be certain an [array] is passed
+                            });
+
+                            x++;
+                        }
+                    } else {
+                        // console.warn('commentIds.length: ', commentIds.length);
+                    };
+
+                } else {
+                    // console.warn('..... no comment ids?');
+                };
+            }
+        },
+        init : function(){
+            if (boost.vars.useReviews) {
+                // @todo: add in logic for checking
+                // if (reviewsInView || reviewTrigger) {
+                // };
+                this.$block = $(this.$block);
+                this.$triggerBlockPre = $(this.$triggerBlockPre);
+                this.$triggerBlockPost = $(this.$triggerBlockPost);
+                this.$templateBlock = $(this.$templateBlock);
+
+                this.checkReviewView();
+            }
+        }
+    };
+
+    // requires Modernizr yepnope loader
+    var loader = (function(Modernizr){
+        
+        if (typeof Modernizr !== 'object') {
+            // console.warn('Modernizr not loaded, so boost.loader cannot run.');
+            return {
+                init : function(){return false;}
+            };
+        } else {
+            // console.info('boost.loader has Modernizr', Modernizr);
+        }
+
+        var market = boostMarket;
+
+        function load(fileOrArray, callback, tflocale){
+            if (tflocale) {
+                // console.trace();
+                // console.log('localized = true');
+                Modernizr.load({
+                    load : 'mks/' + this.market + '/' + fileOrArray,
+                    complete : callback
+                });
+            } else {
+                // console.trace();
+                // console.log('localized = false');
+                Modernizr.load({
+                    load : fileOrArray,
+                    complete : callback
+                });
+            }
+        }
+
+        function loadLocalizedJS(callback){
+            // console.log('---- localized trace js ----')
+            // console.trace();
+            var callbackFn = callback || function(){};
+            boost.loader.load('script.js', callbackFn, true);
+        }
+
+        function loadLocalizedCSS(callback){
+            // console.log('---- localized trace css ----')
+            // console.trace();
+            var callbackFn = callback || function(){};
+            boost.loader.load('style.css', callbackFn, true);
+        }
+
+        function loadCSSFiles(fileArray, callBack){
+            var callbackFn = callback || function(){};
+            boost.loader.load(fileArray, callbackFn, false);
+        }
+
+        function loadJSFiles(fileArray, callback){
+            var callbackFn = callback || function(){};
+            boost.loader.load(fileArray, callbackFn, false);
+        }
+
+        function init (){
+            // no initializing needed, really
+        }
+
+        return {
+            init : init,
+            market : market,
+            load : load,
+            loadLocalizedCSS : loadLocalizedCSS,
+            loadLocalizedJS : loadLocalizedJS,
+            loadCSSFiles : loadCSSFiles,
+            loadJSFiles : loadJSFiles
+        };
+
+    }(Modernizr)); // bringing in same modernizr we load elsewhere
+    
+    var localize = {
+        jsload : function(e, thisMarket){
+            // console.warn('jsload');
+            boost.loader.loadLocalizedJS();
+        },
+        cssload : function(e, thisMarket){
+            // console.warn('cssload');
+            boost.loader.loadLocalizedCSS();
+        }
+    };
+
+    var social = {
+        addthis : function(e, flag){
+            if (flag) {
+               
+                if (_market === 'br' || _market === 'fr' || _market === 'it' || _market === 'es' || _market === 'de' || _market === 'nl' || _market === 'pt' || _market === 'ru' || _market === 'uk'){
+                    
+                    $('.social_btns, .shareboost').css('display', 'block');
+               
+                    var source = boost.vars.urls.addthis;
+                    boost.loader.load(source, function(){
+                            // console.log('social.addthis.load.complete?');
+                            $.unsubscribe('boost.youtube.playing');
+                        },
+                        false
+                    );
+
+                } //end if _market
+            };
+        }        
+    };
+
+    var events = {
+        init : function(){
+            // console.warn('************** setting up events!!!! ********** ')
+            $('body').on('click', function (e) {
+                // typically you shouldn't pass events around, but in this case ...
+                $.publish('boost.events.delegation.body.click', e);
+            });
+        }
+    };
+
+    $('.addthis_button').mousemove(function(e){
+        $('#at15s').css({
+            'position' : 'absolute',
+            'left': boost.vars.winW/2 - 163,
+            'top': '4147px'
+        });
+    });
+
+
+    var ytubecountrycode, ccOnOff; 
+    if (_market==='latin-america'){ytubecountrycode = 'es_mx';}
+    else if (_market==='hk' || _market==='tw'){ytubecountrycode = 'zh_hk';}
+    else if (_market==='br' || _market==='pt'){ytubecountrycode = 'pt_br';}
+    else ytubecountrycode = _market;
+    // console.log(_market);
+    if (_market==='latin-america' || _market==='hk' || _market==='tw' || _market==='br' || _market==='hu' || _market==='es' || (_market==='de' && (!$.browser.msie || document.documentMode > 8)) || _market==='fr' || _market==='ru' || _market==='it'|| _market==='cz'|| _market==='pl'|| _market==='sk' || _market === 'tr'){
+            ccOnOff = 1;
+        }else {
+         /* for those markets that don't have subtitles or non-usuable subtitle */
+            ccOnOff = 0;
+        }
+    
+    var ytiframe = {
+  
+ init : function(){
+    var player;
+
+    onYouTubeIframeAPIReady = function () {
+        player = new YT.Player('player', {
+          height: '100%',
+          width: '100%',
+          videoId: 'MZnAeK9l5oU',
+          playerVars: { 
+            'autoplay': 0, 
+            'controls': 1, 
+            'fs':0, 
+            'rel':0, 
+            'showinfo': 0, 
+            'color':'white', 
+            'wmode': 'transparent', 
+            'cc_lang_pref': ytubecountrycode, 
+            'hl' : ytubecountrycode, 
+            'cc_load_policy': ccOnOff
+        }
+        });
+    }
+
+    function pauseVidHide(){
+        $('#videoverlay').css('display', 'none');
+            try{player.pauseVideo();}catch(e){};
+    }
+
+    $('#ballvideo, .watchvideo').on("click", function(){
+    if ($.browser.msie && player == undefined){
+        onYouTubeIframeAPIReady();
+        }
+        $('#videoverlay').css({
+            'display': 'block', 
+            'top': boost.vars.headerHeight, 
+            'height': boost.vars.winH - boost.vars.headerHeight
+        });   
+            try{
+                player.playVideo();
+            }catch(e){};
+    });
+
+    $('#vid_cls').on("click", function(){
+        pauseVidHide();
+    });
+
+    $(document).keyup(function(e) { /* escape keypress */
+        if (e.keyCode == 27) { pauseVidHide(); }
+    });
+  
+  return player;
+    
+}
+
+};
+
+
+    return {
+
+        vars : vars,
+        init : init,
+        poxIn : poxIn,
+        inView: inView,
+        rAF : rAF,
+        style : style,
+        carousel : carousel,
+        initboosthotspots : initboosthotspots,
+        tray : tray,
+        colors : colors,
+        animate : animate,
+        preloader : preloader,
+        reviews : reviews,
+        Modernizr : Modernizr,
+        loader : loader,
+        localize : localize,
+        social : social,
+        events : events,
+       // loadYTIFrameScript : loadYTIFrameScript,
+        ytiframe : ytiframe
+
+    };
+
+}($boost, __boost__market, boost.Modernizr, __boost__env)); // /boost{}
+
+// Document ready
+$boost(function() {
+    boost.init();
+});

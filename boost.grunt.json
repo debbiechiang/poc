@@ -1,0 +1,21 @@
+{
+    "name" : "boost-app",
+    "jsconcat" : {
+        "js/scripts.all.js" : [
+            "js/console.tracer.js", "js/plugins.js", "js/jquery.scrollTo.js", 
+            "js/jquery.inview.js", "js/jquery.transit.js", "js/boost.noconflict.js", 
+            "js/jquery.easing.js", "js/script.js", "js/boost.balldrop.js"
+    },
+    "plugins": {
+        "js/plugins.min.js" : ["js/plugins.js"]
+    },
+    "jsmin" : {
+        "js/scripts.min.js" : ["js/scripts.all.js"]
+    },
+    "cssconcat" : {
+        "css/style.all.css" : ["css/reset.css", "css/style.css"]
+    },
+    "cssmin" : {
+        "css/style.min.css" : ["css/style.all.css"]
+    }
+}

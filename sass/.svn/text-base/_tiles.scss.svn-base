@@ -1,0 +1,138 @@
+.tilecontainer {
+    width:950px;
+    display:block;
+    margin:0 auto;
+}
+.tile {
+    width:310px;
+    height: 242px;
+    background:#fff;
+    float:left;
+    margin-bottom: 10px;
+    position:relative;
+    &.box1of3, &.box2of3{
+        margin-right:10px;
+    }
+    h4, h5 {
+        padding: 0 9px;
+    }
+    .meta{
+        background-color: #ffffff;
+        border-top: 1px dashed #c1c1c1;
+        border-bottom: 1px solid #CECECE;
+        bottom: 0;
+        font-size: 10px;
+        height: 25px;
+        line-height: 25px;
+        position: absolute;
+        text-transform: uppercase;
+        width: 100%;
+    }
+    .media .gotoLink{
+        width:310px;
+        height:130px;
+        overflow:hidden;
+        display:block;
+    }
+}
+
+.source {
+    position:absolute;
+    top:0;
+    right:0;
+    z-index:5;
+}
+
+.tags {
+        margin: 3px 8px 3px 8px;
+    li,a {
+        font: 10px/18px 'adihausbold', helvetica,sans-serif;
+        color:white;
+    }
+    .tagsmore {
+        padding: 3px 6px 0 4px;
+        background: #216cc0;
+        border: none;
+        display:inline-block;
+        position:relative;
+        .moreList {
+            background: #fff;
+            border: 1px solid #dedede;
+            padding: 15px;
+            display: none;
+            position: absolute;
+            left:0px;
+            text-align: left;
+            top: 21px;
+            width: 210px;
+            z-index: 100;
+            -webkit-border-radius: 7px;
+            -moz-border-radius: 7px;
+            border-radius: 7px;
+            -webkit-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.08);
+            -moz-box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.08);
+            box-shadow: 5px 5px 5px 0px rgba(0, 0, 0, 0.0);
+        }
+    }
+    .roundCorners {
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }
+    .normalTag{
+    padding-right:6px;
+    background:url('../img/tiles/ico_tag.gif') no-repeat center right;
+    overflow:hidden;
+    display:inline-block;
+        a {
+            padding: 4px 12px 2px 5px;
+            text-transform:uppercase;
+            display:block;
+        }
+    }
+}
+
+.meta {
+    font: 10px/25px 'adihausmedium', helvetica,sans-serif;
+    color:#2b2b2b;
+    background-color: #ffffff;
+    border-top: 1px dashed #c1c1c1;
+    border-bottom: 1px solid #CECECE;
+    bottom: 0;
+    font-size: 10px;
+    height: 25px;
+    line-height: 25px;
+    position: absolute;
+    text-transform: uppercase;
+    width: 100%;
+    .left{
+        height:25px;
+        overflow:hidden;
+        width:49%;
+        float:left;
+    }
+    .left .wrap{
+        padding:0 9px;
+    }
+    .right{
+        border-left:1px dashed #c1c1c1;
+        text-align:center;
+        width:50%;
+        float:right;
+    }
+    .comments_count{
+        margin-right:20px;
+    }
+    .comments_count a,.views_count a{
+        color:#000000;
+        position:relative;
+    }
+    .numberOfViews{
+        padding-left:23px;
+        background:url('../img/tiles/ico_eye.gif') no-repeat 0 2px;
+    };
+    .numberOfComments{
+        padding-left:19px;
+        background:url('../img/tiles/ico_comment.gif') no-repeat 0 2px;
+    }
+}

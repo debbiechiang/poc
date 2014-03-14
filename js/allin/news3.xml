@@ -1,0 +1,1018 @@
+<page>
+    <result query="posts">
+        <response>
+            <lst name="responseHeader">
+                <int name="status">0</int>
+                <int name="QTime">7</int>
+                <lst name="params">
+                    <str name="fl">
+                        data tridionId creationDate publishDate displayDate expirationDate articleId
+                    </str>
+                    <str name="sort">publishDate desc</str>
+                    <str name="hl.snippets">5</str>
+                    <str name="start">0</str>
+                    <str name="q">
+                        type:news AND newsType:General -(-expirationDate:[2012-06-07T12:02:40Z TO *] OR expirationDate:[* TO *] OR -expirationDate:"1-01-01T00:00:00Z") AND -(-displayDate:[* TO 2012-06-07T12:02:40Z] OR displayDate:[* TO *] OR -displayDate:"1-01-01T00:00:00Z")
+                    </str>
+                    <str name="hl.fl">text</str>
+                    <str name="wt">xml</str>
+                    <str name="hl">true</str>
+                    <str name="rows">5</str>
+                </lst>
+            </lst>
+            <result name="response" numFound="197" start="0">
+                <doc>
+                    <str name="articleId">p-stella-mix-and-match-news-article</str>
+                    <date name="creationDate">2013-02-08T10:33:11Z</date>
+                    <str name="data">
+                        <News>
+                            <articleInfo>
+                                <articleImages>
+                                    <cardImage>
+                                        <title>630x490</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/630x490_70-17309.jpg
+                                        </path>
+                                    </cardImage>
+                                    <tout_1_1Image>
+                                        <title>310x130</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/310x130_70-17309.jpg
+                                        </path>
+                                    </tout_1_1Image>
+                                    <tout_1_2Image>
+                                        <title>310x380</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/310x380_70-17309.jpg
+                                        </path>
+                                    </tout_1_2Image>
+                                    <thumbnailImage>
+                                        <title>60x44</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/60x44_70-17309.jpg
+                                        </path>
+                                    </thumbnailImage>
+                                    <mobileHeaderImage>
+                                        <title>630x490_header_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/630x490_header_mobile_70-17309.jpg
+                                        </path>
+                                    </mobileHeaderImage>
+                                    <mobileTeaser>
+                                        <title>630x490_teaser_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/630x490_teaser_mobile_70-17309.jpg
+                                        </path>
+                                    </mobileTeaser>
+                                </articleImages>
+                                <articleTitle>Mix &amp; Match Your Way</articleTitle>
+                                <sharingInfo>
+                                    <facebookTitle>Show us your Mix &amp; Match style!</facebookTitle>
+                                    <facebookDescription>
+                                        Spring is here! Stay motivated in the new adidas Women Training Collection!
+                                    </facebookDescription>
+                                    <facebookThumbnail>
+                                        <title>90x90</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/90x90_70-17309.jpg
+                                        </path>
+                                    </facebookThumbnail>
+                                    <twitterDescription>Mix &amp; Match Your Way #adidaswomen</twitterDescription>
+                                </sharingInfo>
+                                <tags>
+                                    <categoryTags>
+                                        <tag>
+                                            <label>Women's Training</label>
+                                            <id>women's-training</id>
+                                        </tag>
+                                    </categoryTags>
+                                    <productTags>
+                                        <tag>
+                                            <label>adipure tr 360</label>
+                                            <id>adipure-tr-360</id>
+                                        </tag>
+                                        <tag>
+                                            <label>Prime Tee</label>
+                                            <id>prime-tee</id>
+                                        </tag>
+                                        <tag>
+                                            <label>SN Racer bra</label>
+                                            <id>sn-racer-bra</id>
+                                        </tag>
+                                        <tag>
+                                            <label>TechFit Perfect ¾</label>
+                                            <id>techfit-perfect-¾</id>
+                                        </tag>
+                                    </productTags>
+                                </tags>
+                                <articleRelatedProducts>
+                                    <productId>Q20522</productId>
+                                    <productId>Q20512</productId>
+                                    <productId>Q20521</productId>
+                                    <productId>Z30856</productId>
+                                    <productId>Z30855</productId>
+                                    <productId>Z23166</productId>
+                                    <productId>Z43396</productId>
+                                    <productId>Z28933</productId>
+                                    <productId>Z28942</productId>
+                                    <productId>Z28924</productId>
+                                    <productId>Z28957</productId>
+                                    <productId>Z35757</productId>
+                                    <productId>Z08931</productId>
+                                    <productId>Z22175</productId>
+                                    <productId>X18262</productId>
+                                    <productId>Z20099</productId>
+                                    <productId>Z20119</productId>
+                                    <productId>Z29688</productId>
+                                    <productId>Z29694</productId>
+                                    <productId>Z29710</productId>
+                                    <productId>Z29696</productId>
+                                </articleRelatedProducts>
+                                <editorialSegmentTitle>
+                                    <tag>
+                                        <label>Collection Launch</label>
+                                        <id>collection-launch</id>
+                                    </tag>
+                                </editorialSegmentTitle>
+                            </articleInfo>
+                            <newsType>General</newsType>
+                            <contentBlock>
+                                <media>
+                                    <image>
+                                        <path>
+                                            <title>800x800_1</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/800x800_1_70-17309.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>710x440_1</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/710x440_1_70-17309.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                        <caption>
+                                            <table border="0" cellpadding="0" style="border-collapse: collapse;width:341pt">
+                                                <tbody>
+                                                    <tr style="height:14.4pt">
+                                                        <td style="height:14.4pt;width:341pt">
+                                                            Show us how you Mix &amp; Match in your adidas - tag #mixandmatch #adidaswomen @adidaswomen on Instagram
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </caption>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>800x800_2</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/800x800_2_70-17309.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>710x440_2</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/710x440_2_70-17309.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                        <caption>
+                                            <table border="0" cellpadding="0" style="border-collapse: collapse;width:341pt">
+                                                <tbody>
+                                                    <tr style="height:14.4pt">
+                                                        <td style="height:14.4pt;width:341pt">
+                                                            Stay motivated this Spring with our new adidas Women Training Collection - perfect for Mix &amp; Matching
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </caption>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>800x800_3</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/800x800_3_70-17309.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>710x440_3</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/710x440_3_70-17309.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                        <caption>
+                                            <table border="0" cellpadding="0" style="border-collapse: collapse;width:341pt">
+                                                <tbody>
+                                                    <tr style="height:15.0pt">
+                                                        <td style="height:15.0pt;width:341pt">We're outside training!! #adidaswomen</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </caption>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>800x800_4</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/800x800_4_70-17309.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>710x440_4</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/710x440_4_70-17309.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                        <caption>
+                                            <table border="0" cellpadding="0" style="border-collapse: collapse;width:341pt">
+                                                <tbody>
+                                                    <tr style="height:14.4pt">
+                                                        <td style="height:14.4pt;width:341pt">
+                                                            Check us out on Facebook.com/adidaswomen and Instagram.com/adidaswomen
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </caption>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>800x800_5</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/800x800_5_70-17309.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>710x440_5</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/710x440_5_70-17309.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                </media>
+                                <text>
+                                    <p>
+                                        The secret weapon in making and, more importantly, keeping New Year's resolutions is commitment. You set the goal (“I will beat my best time” or “I will wake up earlier to train harder”) and then you work towards it, little by little. It takes time and effort, but reaching that goal is a whole lot easier (and more fun) when you equip yourself with the best gear.
+                                    </p>
+                                    <p></p>
+                                    <p>
+                                        From shoes to apparel, accessories to equipment, options are endless when it comes to mixing and matching adidas Women’s Training gear. Stay motivated to stick to a new sport or reach another goal by shopping the new adidas Training range.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        What do our girls love from the new adidas Women Training? Available in multiple colors for mixing and matching. The essentials to keep your gym bag full and you inspired: Our adiPure trainers, Prime tees &amp;amp; hoodies, the unbelievably comfortable TechFit ¾ pants, Marathon shorts, and the SN Racer bra.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        During the month of February we want to see your Mix &amp;amp; Match sport style. Check our facebook.com/adidaswomen to see how we’ve styled some looks! Show us your own and tag
+                                        <a href="http://web.stagram.com/n/adidaswomen/" target="_blank">@adidaswomen</a>
+                                        #adidaswomen #mixandmatch on Instagram for a chance to be featured on our feed.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        The styles are fresh and the technologies speak for themselves. Pick these up and feel the difference for yourself. Two of our favorites:
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        adiPRENE: Heel-cushioning technology helps reduce the harmful repetitive effects from continuous impact while running or performing other activities. The adiPRENE technology provides optimal cushioning and support at the moment of impact but also absorbs the shock of impact by dispersing that energy throughout the body.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        adidas ClimaCool: Keep cool and comfortable while performing at your peak, even in the hottest conditions. ClimaCool actively expels heat and sweat away from your body - how cool is that?
+                                    </p>
+                                </text>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                        </News>
+                    </str>
+                    <date name="displayDate">1-01-01T00:00:00Z</date>
+                    <date name="expirationDate">1-01-01T00:00:00Z</date>
+                    <date name="publishDate">2013-02-18T10:40:05Z</date>
+                    <str name="tridionId">tcm:70-17309</str>
+                </doc>
+                <doc>
+                    <str name="articleId">s-neo-neatly-organized-news-article-ss13</str>
+                    <date name="creationDate">2013-01-28T15:59:16Z</date>
+                    <str name="data">
+                        <News>
+                            <articleInfo>
+                                <articleImages>
+                                    <cardImage>
+                                        <title>adi_078_OneSite_NeatlyOrg_Feature_630x490</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Feature_630x490_70-17005.jpg
+                                        </path>
+                                    </cardImage>
+                                    <tout_1_1Image>
+                                        <title>adi_078_OneSite_NeatlyOrg_Feature_310x130</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Feature_310x130_70-17005.jpg
+                                        </path>
+                                    </tout_1_1Image>
+                                    <tout_1_2Image>
+                                        <title>adi_078_OneSite_NeatlyOrg_Feature_310x380</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Feature_310x380_70-17005.jpg
+                                        </path>
+                                    </tout_1_2Image>
+                                    <thumbnailImage>
+                                        <title>adi_078_OneSite_NeatlyOrg_Feature_60x40</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Feature_60x40_70-17005.jpg
+                                        </path>
+                                    </thumbnailImage>
+                                    <mobileHeaderImage>
+                                        <title>adi_078_OneSite_NeatlyOrg_Feature_630x490_header_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Feature_630x490_header_mobile_70-17005.jpg
+                                        </path>
+                                    </mobileHeaderImage>
+                                    <mobileTeaser>
+                                        <title>adi_078_OneSite_NeatlyOrg_Feature_630x490_teaser_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Feature_630x490_teaser_mobile_70-17005.jpg
+                                        </path>
+                                    </mobileTeaser>
+                                </articleImages>
+                                <articleTitle>NEO Gets Neatly Organized</articleTitle>
+                                <sharingInfo>
+                                    <facebookTitle>Best Snow Day Ever</facebookTitle>
+                                    <facebookDescription>
+                                        NEO’s latest styles go neatly organized to bring these awesome new outfits to life.
+                                    </facebookDescription>
+                                    <facebookThumbnail>
+                                        <title>adi_078_OneSite_NeatlyOrg_Feature_90x90</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Feature_90x90_70-17005.jpg
+                                        </path>
+                                    </facebookThumbnail>
+                                    <twitterDescription>
+                                        Check out our favorite NEO styles getting Neatly Organized (link) #liveyourstyle
+                                    </twitterDescription>
+                                </sharingInfo>
+                                <tags>
+                                    <categoryTags>
+                                        <tag>
+                                            <label>NEO</label>
+                                            <id>neo</id>
+                                        </tag>
+                                    </categoryTags>
+                                </tags>
+                                <editorialSegmentTitle>
+                                    <tag>
+                                        <label>NEO Gets Neatly Organized</label>
+                                        <id>neo- gets-neatly-organized</id>
+                                    </tag>
+                                </editorialSegmentTitle>
+                            </articleInfo>
+                            <newsType>General</newsType>
+                            <contentBlock>
+                                <media>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GIRLS_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GIRLS_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GIRLS_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GIRLS_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GUYS_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GUYS_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GUYS_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_BACK-TO-SCHOOL_GUYS_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_BLACK_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_BLACK_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_BLACK_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_BLACK_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_DENIM_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_DENIM_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_Denim_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_Denim_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_GREEN_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_GREEN_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_GREEN_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_GREEN_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_CHRISTMAS_GIRLS_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_CHRISTMAS_GIRLS_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_CHRISTMAS_GIRLS_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_CHRISTMAS_GIRLS_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_CHRISTMAS_GUYS_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_CHRISTMAS_GUYS_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_CHRISTMAS_GUYS_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_CHRISTMAS_GUYS_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_NYE_GIRLS_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_NYE_GIRLS_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_NYE_GIRLS_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_NYE_GIRLS_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_NYE_GUYS_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_NYE_GUYS_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_NYE_GUYS_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_NYE_GUYS_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_PINK_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_PINK_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_PINK_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_PINK_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_RED_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_RED_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_RED_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_RED_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                    <image>
+                                        <path>
+                                            <title>adi_078_OneSite_NeatlyOrg_YELLOW_990x614</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_YELLOW_990x614_70-17005.jpg
+                                            </path>
+                                        </path>
+                                        <thumbnailPath>
+                                            <title>adi_078_OneSite_NeatlyOrg_YELLOW_700x440</title>
+                                            <path>
+                                                http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/adi_078_OneSite_NeatlyOrg_YELLOW_700x440_70-17005.jpg
+                                            </path>
+                                        </thumbnailPath>
+                                    </image>
+                                </media>
+                                <text>
+                                    <p>
+                                        Got your Fall and Winter wardrobe all laid out? If not, NEO can help.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        At a recent photo shoot, NEO’s latest styles starred in a series of animated gifs that bring these awesome new outfits to life. Inspired by the “things organized neatly” trend in photography, each of the gifs introduces one NEO item at a time, tidily laid out on a wooden pallet. Using lo-fi stopmotion animation, the whole color-coded outfit appears within seconds and then dances around the pallet. We organized these NEO ensembles to inspire your attire all through the holidays — with outfits for Christmas, New Year’s Eve, and Valentine’s Day.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        So take a look at the stills from the shoot or
+                                        <a href="http://adidasneolabel.tumblr.com/tagged/NEOOrganizedNeatly" target="_blank">head here</a>
+                                        for the animated versions and watch the latest NEO styles come alive!
+                                    </p>
+                                </text>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                        </News>
+                    </str>
+                    <date name="displayDate">1-01-01T00:00:00Z</date>
+                    <date name="expirationDate">1-01-01T00:00:00Z</date>
+                    <date name="publishDate">2013-02-18T09:21:15Z</date>
+                    <str name="tridionId">tcm:70-17005</str>
+                </doc>
+                <doc>
+                    <str name="articleId">p-running-boost-unveil-cushioningtechnology-gai-news</str>
+                    <date name="creationDate">2013-02-01T12:52:35Z</date>
+                    <str name="data">
+                        <News>
+                            <articleInfo>
+                                <articleImages>
+                                    <cardImage>
+                                        <title>P_Running_Boost_Unveil_CushioningTechnology_GAI_news_630x490_darker</title> 
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/P_Running_Boost_Unveil_CushioningTechnology_GAI_news_630x490_darker_70-17113.jpg
+                                        </path>
+                                    </cardImage>
+                                    <tout_1_1Image>
+                                        <title>P_Running_Boost_Unveil_CushioningTechnology_GAI_news_310x130</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/P_Running_Boost_Unveil_CushioningTechnology_GAI_news_310x130_70-17113.jpg
+                                        </path>
+                                    </tout_1_1Image>
+                                    <tout_1_2Image>
+                                        <title>P_Running_Boost_Unveil_CushioningTechnology_GAI_news_310x380</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/P_Running_Boost_Unveil_CushioningTechnology_GAI_news_310x380_70-17113.jpg
+                                        </path>
+                                    </tout_1_2Image>
+                                    <thumbnailImage>
+                                        <title>P_Running_Boost_Unveil_CushioningTechnology_GAI_news_60x4</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/P_Running_Boost_Unveil_CushioningTechnology_GAI_news_60x4_70-17113.jpg
+                                        </path>
+                                    </thumbnailImage>
+                                    <mobileHeaderImage>
+                                        <title>P_Running_Boost_Unveil_CushioningTechnology_GAI_news_630x490_header_mobile</title> 
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/P_Running_Boost_Unveil_CushioningTechnology_GAI_news_630x490_header_mobile_70-17113.jpg
+                                        </path>
+                                    </mobileHeaderImage>
+                                    <mobileTeaser>
+                                        <title>
+                                            P_Running_Boost_Unveil_CushioningTechnology_GAI_news_630x490_teaser_mobile
+                                        </title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/P_Running_Boost_Unveil_CushioningTechnology_GAI_news_630x490_teaser_mobile_70-17113.jpg
+                                        </path>
+                                    </mobileTeaser>
+                                </articleImages>
+                                <articleTitle>BOOST- Cushioning Technology</articleTitle>
+                                <sharingInfo>
+                                    <facebookTitle>adidas: BOOST- Cushioning Technology</facebookTitle>
+                                    <facebookDescription>
+                                        Boost is a groundbreaking innovation in cushioning. Find out more.
+                                    </facebookDescription>
+                                    <facebookThumbnail>
+                                        <title>P_Running_Boost_Unveil_CushioningTechnology_GAI_news_90x90</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/02/P_Running_Boost_Unveil_CushioningTechnology_GAI_news_90x90_70-17113.jpg
+                                        </path>
+                                    </facebookThumbnail>
+                                    <twitterDescription>
+                                        Boost is a groundbreaking innovation in cushioning. Find out more.
+                                    </twitterDescription>
+                                </sharingInfo>
+                                <tags>
+                                    <categoryTags>
+                                        <tag>
+                                            <label>Running</label>
+                                            <id>running</id>
+                                        </tag>
+                                    </categoryTags>
+                                    <productTags>
+                                        <tag>
+                                            <label>Boost</label>
+                                            <id>boost</id>
+                                        </tag>
+                                    </productTags>
+                                </tags>
+                                <customEditorialSegmentTitle>BOOST</customEditorialSegmentTitle>
+                                <editorialSegmentTitle>
+                                    <tag>
+                                        <label>adidas &amp; VICE present</label>
+                                        <id>adidas &amp; VICE present</id>
+                                    </tag>
+                                </editorialSegmentTitle>
+                            </articleInfo>
+                            <newsType>General</newsType>
+                            <contentBlock>
+                                <text>
+                                    <p>
+                                        BOOST is a groundbreaking innovation in cushioning. It provides more energy return than any other foam cushioning material in the running industry, combining soft comfort with responsive energy for the ultimate running experience. In the heat, in the cold and after countless kilometers, it performs more consistently and doesn’t lose its cushioning properties like standard EVA.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>#boost</p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        Find out more:
+                                        <a href="http://www.adidas.com/boost">http://www.adidas.com/boost</a>
+                                    </p>
+                                    <p>
+                                        Join the conversation:
+                                        <a target="_blank" href="http://www.facebook.com/adidasrunning">http://www.facebook.com/adidasrunning</a>
+                                    </p>
+                                </text>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                            <contentBlock>
+                                <media>
+                                    <externalVideo>
+                                        <path>http://youtu.be/2QXayMkbvpk</path>
+                                    </externalVideo>
+                                </media>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                        </News>
+                    </str>
+                    <date name="displayDate">1-01-01T00:00:00Z</date>
+                    <date name="expirationDate">1-01-01T00:00:00Z</date>
+                    <date name="publishDate">2013-02-13T16:09:22Z</date>
+                    <str name="tridionId">tcm:70-17113</str>
+                </doc>
+                <doc>
+                    <str name="articleId">p-running-boost-unveil-gai-news</str>
+                    <date name="creationDate">2013-01-31T13:01:32Z</date>
+                    <str name="data">
+                        <News>
+                            <articleInfo>
+                                <articleImages>
+                                    <cardImage>
+                                        <title>P_Running_Boost_Unveil_GAI_news_630x490</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/P_Running_Boost_Unveil_GAI_news_630x490_70-17092.jpg
+                                        </path>
+                                    </cardImage>
+                                    <tout_1_1Image>
+                                        <title>P_Running_Boost_Unveil_GAI_news_310x130</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/P_Running_Boost_Unveil_GAI_news_310x130_70-17092.jpg
+                                        </path>
+                                    </tout_1_1Image>
+                                    <tout_1_2Image>
+                                        <title>P_Running_Boost_Unveil_GAI_news_310x380</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/P_Running_Boost_Unveil_GAI_news_310x380_70-17092.jpg
+                                        </path>
+                                    </tout_1_2Image>
+                                    <thumbnailImage>
+                                        <title>P_Running_Boost_Unveil_GAI_news_60x44</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/P_Running_Boost_Unveil_GAI_news_60x44_70-17092.jpg
+                                        </path>
+                                    </thumbnailImage>
+                                    <mobileHeaderImage>
+                                        <title>P_Running_Boost_Unveil_GAI_news_630x490_header_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/P_Running_Boost_Unveil_GAI_news_630x490_header_mobile_70-17092.jpg
+                                        </path>
+                                    </mobileHeaderImage>
+                                    <mobileTeaser>
+                                        <title>P_Running_Boost_Unveil_GAI_news_630x490_teaser_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/P_Running_Boost_Unveil_GAI_news_630x490_teaser_mobile_70-17092.jpg
+                                        </path>
+                                    </mobileTeaser>
+                                </articleImages>
+                                <articleTitle>BOOST- A Running Revolution</articleTitle>
+                                <sharingInfo>
+                                    <facebookTitle>BOOST- A Running Revolution</facebookTitle>
+                                    <facebookDescription>
+                                        BOOST provides more energy return than any other foam cushioning material in the running industry. BOOST your run.
+                                    </facebookDescription>
+                                    <facebookThumbnail>
+                                        <title>P_Running_Boost_Unveil_GAI_news_90x90</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/P_Running_Boost_Unveil_GAI_news_90x90_70-17092.jpg
+                                        </path>
+                                    </facebookThumbnail>
+                                    <twitterDescription>
+                                        BOOST provides more energy return than any other foam cushioning material in the running industry. BOOST your run. #boost
+                                    </twitterDescription>
+                                </sharingInfo>
+                                <tags>
+                                    <categoryTags>
+                                        <tag>
+                                            <label>Running</label>
+                                            <id>running</id>
+                                        </tag>
+                                    </categoryTags>
+                                    <productTags>
+                                        <tag>
+                                            <label>Boost</label>
+                                            <id>boost</id>
+                                        </tag>
+                                    </productTags>
+                                </tags>
+                                <customEditorialSegmentTitle>BOOST</customEditorialSegmentTitle>
+                                <editorialSegmentTitle>
+                                    <tag>
+                                        <label>adidas &amp; VICE present</label>
+                                        <id>adidas &amp; VICE present</id>
+                                    </tag>
+                                </editorialSegmentTitle>
+                            </articleInfo>
+                            <newsType>General</newsType>
+                            <contentBlock>
+                                <text>
+                                    <p>
+                                        BOOST provides more energy return than any other foam cushioning material in the running industry. It combines soft comfort with responsive energy for the ultimate running experience. BOOST your run.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>#boost</p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        Learn more about
+                                        <a href="http://www.adidas.com/com/goallin/news/2013/02/p-running-boost-unveil-cushioningtechnology-gai-news">Boost technology</a>
+                                        .
+                                    </p>
+                                    <p>
+                                        Find out more:
+                                        <a href="http://www.adidas.com/boost">http://www.adidas.com/boost</a>
+                                    </p>
+                                    <p>
+                                        Join the conversation:
+                                        <a target="_blank" href="http://www.facebook.com/adidasrunning">http://www.facebook.com/adidasrunning</a>
+                                    </p>
+                                </text>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                            <contentBlock>
+                                <media>
+                                    <externalVideo>
+                                        <path>http://youtu.be/MZnAeK9l5oU</path>
+                                    </externalVideo>
+                                </media>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                        </News>
+                    </str>
+                    <date name="displayDate">1-01-01T00:00:00Z</date>
+                    <date name="expirationDate">1-01-01T00:00:00Z</date>
+                    <date name="publishDate">2013-02-13T15:57:17Z</date>
+                    <str name="tridionId">tcm:70-17092</str>
+                </doc>
+                <doc>
+                    <str name="articleId">originals-undenk-gai-news</str>
+                    <date name="creationDate">2013-01-14T12:42:59Z</date>
+                    <str name="data">
+                        <News>
+                            <articleInfo>
+                                <articleImages>
+                                    <cardImage>
+                                        <title>Originals_Undenk_GAI_news_630x490 (1)</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/Originals_Undenk_GAI_news_630x490_70-16271.jpg
+                                        </path>
+                                    </cardImage>
+                                    <tout_1_1Image>
+                                        <title>Originals_Undenk_GAI_news_310x130</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/Originals_Undenk_GAI_news_310x130_70-16271.jpg
+                                        </path>
+                                    </tout_1_1Image>
+                                    <tout_1_2Image>
+                                        <title>Originals_Undenk_GAI_news_310x380</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/Originals_Undenk_GAI_news_310x380_70-16271.jpg
+                                        </path>
+                                    </tout_1_2Image>
+                                    <thumbnailImage>
+                                        <title>Originals_Undenk_GAI_news_60x44</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/Originals_Undenk_GAI_news_60x44_70-16271.jpg
+                                        </path>
+                                    </thumbnailImage>
+                                    <mobileHeaderImage>
+                                        <title>Originals_Undenk_GAI_news_630x490 (1)_header_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/Originals_Undenk_GAI_news_630x490 (1)_header_mobile_70-16271.jpg
+                                        </path>
+                                    </mobileHeaderImage>
+                                    <mobileTeaser>
+                                        <title>Originals_Undenk_GAI_news_630x490 (1)_teaser_mobile</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/Originals_Undenk_GAI_news_630x490 (1)_teaser_mobile_70-16271.jpg
+                                        </path>
+                                    </mobileTeaser>
+                                </articleImages>
+                                <articleTitle>adidas Originals | all in with Undenk</articleTitle>
+                                <sharingInfo>
+                                    <facebookTitle>adidas Originals | all in with Undenk</facebookTitle>
+                                    <facebookDescription>
+                                        Introducing, Undenk, a new Berlin-based art collective. Check out the story of Undenk's art and how Berlin's history inspires their work.
+                                    </facebookDescription>
+                                    <facebookThumbnail>
+                                        <title>Originals_Undenk_GAI_news_60x44</title>
+                                        <path>
+                                            http://hp.static.adidas.com/brand/binaries/live/global/images/2013/01/Originals_Undenk_GAI_news_60x44_70-16271.jpg
+                                        </path>
+                                    </facebookThumbnail>
+                                    <twitterDescription>
+                                        Berlin &amp; street art mixed with a healthy dose of cynicism and creative free will. adidas and VICE meet Undenk.
+                                    </twitterDescription>
+                                </sharingInfo>
+                                <tags>
+                                    <categoryTags>
+                                        <tag>
+                                            <label>Originals</label>
+                                            <id>originals</id>
+                                        </tag>
+                                    </categoryTags>
+                                    <celebrityTags>
+                                        <tag>
+                                            <label>Undenk</label>
+                                            <id>undenk</id>
+                                        </tag>
+                                    </celebrityTags>
+                                </tags>
+                                <articleRelatedProducts>
+                                    <productId>Q23658</productId>
+                                    <productId>X53073</productId>
+                                    <productId>Z37757</productId>
+                                </articleRelatedProducts>
+                                <editorialSegmentTitle>
+                                    <tag>
+                                        <label>all in a day</label>
+                                        <id>all-in-a-day</id>
+                                    </tag>
+                                </editorialSegmentTitle>
+                            </articleInfo>
+                            <newsType>General</newsType>
+                            <contentBlock>
+                                <text>
+                                    <p>
+                                        Meet Undenk, one of the most original street art collectives in the world.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        Everyone knows Berlin has more street art than pretty much any other city in the world, so meet Undenk, one of the groups at the scene's forefront. Its ten members are putting up some of of the most forward-thinking work around.
+                                    </p>
+                                    <p>
+                                        <br />
+                                    </p>
+                                    <p>
+                                        In Part 1, we go to Berlin to catch up with three of Undenk's core members - Matthias Povel, and Lukas and Paul Kampfmann. We chat with Berlin street dons Pisa 73 and Christian Rothenhagen to learn how Undenk are perceived by their contemporaries.
+                                    </p>
+                                </text>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                            <contentBlock>
+                                <media>
+                                    <externalVideo>
+                                        <path>http://youtu.be/vxF8whxHOyM</path>
+                                    </externalVideo>
+                                </media>
+                                <text>
+                                    <p>
+                                        Check out more from Undenk in Part 2 of the series, when we head out in the early morning hours to make street art, Undenk-style. We learn more about the crews' careers and join them on a Berlin rooftop, as they sticker and drop knowledge on the future of street art.
+                                    </p>
+                                </text>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                            <contentBlock>
+                                <media>
+                                    <externalVideo>
+                                        <path>http://youtu.be/EOqdmoQEEUI</path>
+                                    </externalVideo>
+                                </media>
+                                <layout>
+                                    <tag>
+                                        <label>1 Column</label>
+                                        <id>1col</id>
+                                    </tag>
+                                </layout>
+                            </contentBlock>
+                        </News>
+                    </str>
+                    <date name="displayDate">1-01-01T00:00:00Z</date>
+                    <date name="expirationDate">1-01-01T00:00:00Z</date>
+                    <date name="publishDate">2013-01-25T07:54:18Z</date>
+                    <str name="tridionId">tcm:70-16271</str>
+                </doc>
+            </result>
+            <lst name="highlighting">
+                <lst name="tcm:70-17309"/>
+                <lst name="tcm:70-17005"/>
+                <lst name="tcm:70-17113"/>
+                <lst name="tcm:70-17092"/>
+                <lst name="tcm:70-16271"/>
+            </lst>
+        </response>
+    </result>
+</page>

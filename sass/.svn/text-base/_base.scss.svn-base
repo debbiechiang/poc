@@ -1,0 +1,80 @@
+/* VARIABLES */
+
+$yellow: #ffd600;
+$screenH: 800px;
+
+/* ../fonts */
+
+// ADI NEUE
+@font-face {
+    font-family: 'adineuebold';
+    src: url('../fonts/adineue-bold.eot');
+    src: url('../fonts/adineue-bold?#iefix') format('embedded-opentype'),
+         url('../fonts/adineue-bold.woff') format('woff'),
+         url('../fonts/adineue-bold.ttf') format('truetype'),
+         url('../fonts/adineue-bold.svg#adineuebold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'adineueregular';
+    src: url('../fonts/adineue-regular.eot');
+    src: url('../fonts/adineue-regular.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/adineue-regular.woff') format('woff'),
+         url('../fonts/adineue-regular.ttf') format('truetype'),
+         url('../fonts/adineue-regular.svg#adineueregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'adineuelight';
+    src: url('../fonts/adineue-light.eot');
+    src: url('../fonts/adineue-light.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/adineue-light.woff') format('woff'),
+         url('../fonts/adineue-light.ttf') format('truetype'),
+         url('../fonts/adineue-light.svg#adineuelight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+// ADI HAUS
+@font-face {
+    font-family: 'adihausmedium';
+    src: url('../fonts/adihausps-md-webfont.eot');
+    src: url('../fonts/adihausps-md-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/adihausps-md-webfont.woff') format('woff'),
+         url('../fonts/adihausps-md-webfont.ttf') format('truetype'),
+         url('../fonts/adihausps-md-webfont.svg#adihausmedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'adihausbold';
+    src: url('../fonts/adihdb__.eot');
+    src: url('../fonts/adihdb__.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/adihdb__.woff') format('woff'),
+         url('../fonts/adihdb__.ttf') format('truetype'),
+         url('../fonts/adihdb__.svg#adihausbold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'adihausregular';
+    src: url('../fonts/adihrg__-webfont.eot');
+    src: url('../fonts/adihrg__-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/adihrg__-webfont.woff') format('woff'),
+         url('../fonts/adihrg__-webfont.ttf') format('truetype'),
+         url('../fonts/adihrg__-webfont.svg#adihausregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}

@@ -1,0 +1,567 @@
+<News>
+
+    <articleInfo>
+
+        <articleImages>
+
+            <cardImage>
+
+                <title>Originals_630x490</title>
+
+                <path>
+                    //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_630x490_74-18191.jpg
+                </path>
+
+            </cardImage>
+
+            <tout_1_1Image>
+
+                <title>Originals_310x130</title>
+
+                <path>
+                    //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_310x130_74-18191.jpg
+                </path>
+
+                <hotspots>
+
+                    <hotspot>
+
+                        <productID>G45710</productID>
+
+                        <x>100</x>
+
+                        <y>100</y>
+
+                    </hotspot>
+
+                </hotspots>
+
+            </tout_1_1Image>
+
+            <tout_1_2Image>
+
+                <title>Originals_310x380</title>
+
+                <path>
+                    //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_310x380_74-18191.jpg
+                </path>
+
+                <hotspots>
+
+                    <hotspot>
+
+                        <productID>G45710</productID>
+
+                        <x>200</x>
+
+                        <y>200</y>
+
+                    </hotspot>
+
+                </hotspots>
+
+            </tout_1_2Image>
+
+            <thumbnailImage>
+
+                <title>Originals_60x44</title>
+
+                <path>
+                    //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_60x44_74-18191.jpg
+                </path>
+
+            </thumbnailImage>
+
+            <mobileHeaderImage>
+
+                <title>Originals_60x44</title>
+
+                <path>
+                    //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_60x44_74-18191.jpg
+                </path>
+
+            </mobileHeaderImage>
+
+            <mobileTeaser>
+
+                <title>Originals_60x44</title>
+
+                <path>
+                    //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_60x44_74-18191.jpg
+                </path>
+
+            </mobileTeaser>
+
+        </articleImages>
+
+        <articleTitle>text format 105</articleTitle>
+
+        <sharingInfo>
+
+            <facebookTitle>text format</facebookTitle>
+
+            <facebookDescription>text format</facebookDescription>
+
+            <facebookThumbnail>
+
+                <title>Originals_60x44</title>
+
+                <path>
+                    //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_60x44_74-18191.jpg
+                </path>
+
+            </facebookThumbnail>
+
+        </sharingInfo>
+
+        <tags>
+
+            <categoryTags>
+
+                <tag>
+
+                    <label>2012</label>
+
+                    <id>2012</id>
+
+                </tag>
+
+            </categoryTags>
+
+        </tags>
+
+        <customEditorialSegmentTitle>text format 105</customEditorialSegmentTitle>
+
+        <editorialSegmentTitle>
+
+            <tag>
+
+                <label>adidas &amp; VICE present</label>
+
+                <id>adidas &amp; VICE present</id>
+
+            </tag>
+
+        </editorialSegmentTitle>
+
+    </articleInfo>
+
+    <newsType>General</newsType>
+
+    <contentBlock>
+
+        <bio>
+
+            <bioTitle>Bio Titile</bioTitle>
+
+            <bioSubtitle>Bio Subtitle</bioSubtitle>
+
+            <bioText>
+
+                <p>
+                    Hoping to silence skeptics wondering if <strong>President Obama</strong>
+                    had ever shot a gun, the White House released a photo of him skeet shooting at <em>Camp David</em>
+
+                </p>
+
+                <p>
+                    NBC’s
+                    <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">Peter Alexander</a>
+                    reports and NBC’s Chuck Todd offers analysis.
+                </p>
+
+            </bioText>
+
+        </bio>
+
+        <text>
+
+            <p>
+                Hoping to silence skeptics wondering if
+                <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">President Obama</a>
+                had ever shot a gun, the <strong>White House</strong>
+                released a photo of him skeet shooting at Camp David ut the image has only stirred up more controversy in the gun control debate. <em>NBC’s Peter Alexander reports and NBC’s Chuck Todd offers</em>
+                analysis.
+            </p>
+
+        </text>
+
+        <layout>
+
+            <tag>
+
+                <label>2 Columns with Bio</label>
+
+                <id>2colBio</id>
+
+            </tag>
+
+        </layout>
+
+    </contentBlock>
+
+    <contentBlock>
+
+        <media>
+
+            <platformVideo>
+
+                <videoId>2222</videoId>
+
+                <caption>
+
+                    <p>
+                        Hoping to silence skeptics wondering if
+                        <strong>President Obama</strong>
+                        had ever shot a gun, the
+                        <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">White House</a>
+                        released a photo of him skeet shooting at
+                        <em>Camp David</em>
+
+                    </p>
+
+                    <p>
+                        but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+                    </p>
+
+                </caption>
+
+            </platformVideo>
+
+        </media>
+
+        <text>
+
+            <p>
+                Hoping
+                <strong>to silence skeptics wonderin</strong>
+                g if President Obama had ever shot a gun, the
+                <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">White House</a>
+                released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.Hoping to silence skeptics wondering if President Obama had ever shot a
+                <em>gun, the White House relea</em>
+                sed a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+            </p>
+
+            <p>
+
+                <br />
+
+            </p>
+
+            <p>
+
+                <blockquote>
+                    Hoping
+                    <strong>to silence skeptics wonderin</strong>
+                    g if President Obama had ever shot a gun, the
+                    <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">White House</a>
+                    released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.Hoping to silence skeptics wondering if President Obama had ever shot a
+                    <em>gun, the White House relea</em>
+                    sed a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+                </blockquote>
+                Hoping
+                <strong>to silence skeptics wonderin</strong>
+                g if President Obama had ever shot a gun, the
+                <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">White House</a>
+                released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.Hoping to silence skeptics wondering if President Obama had ever shot a
+                <em>gun, the White House relea</em>
+                sed a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+            </p>
+
+            <p>
+
+                <blockquote>
+
+                    <br />
+
+                </blockquote>
+                Hoping to silence skeptics wondering if President Obama had ever shot a gun, the White House
+                <img src=\"//hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_310x130_74-18191.jpg\" class=\"hotspots\" data-hotspots=\"[{productID:'G45710',x:100,y:100}]\" />
+                released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.Hoping to silence skeptics wondering if President Obama had ever shot a gun, the White House released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+            </p>
+
+        </text>
+
+        <layout>
+
+            <tag>
+
+                <label>2 Columns with Quotes</label>
+
+                <id>2col</id>
+
+            </tag>
+
+        </layout>
+
+    </contentBlock>
+
+    <contentBlock>
+
+        <media>
+
+            <image>
+
+                <path>
+
+                    <title>Originals_990x614</title>
+
+                    <path>
+                        //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/990x614_giant_talking_shoeboxes_74-18191.jpg
+                    </path>
+
+                    <hotspots>
+
+                        <hotspot>
+
+                            <productID>G45710</productID>
+
+                            <x>200</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>900</x>
+
+                            <y>600</y>
+
+                        </hotspot>
+
+                    </hotspots>
+
+                </path>
+
+                <thumbnailPath>
+
+                    <title>Originals_710x440</title>
+
+                    <path>
+                        //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/710x440_giant_talking_shoeboxes_74-18191.jpg
+                    </path>
+
+                    <hotspots>
+
+                        <hotspot>
+
+                            <productID>G61786</productID>
+
+                            <x>200</x>
+
+                            <y>100</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61784</productID>
+
+                            <x>200</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>300</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>10</x>
+
+                            <y>10</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>500</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                    </hotspots>
+
+                </thumbnailPath>
+
+                <caption>
+
+                    <p>
+                        Hoping to
+                        <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">silence</a>
+                        skeptics wondering
+                    </p>
+
+                    <p>if President Obama had ever shot a gun</p>
+
+                </caption>
+
+            </image>
+
+            <image>
+
+                <path>
+
+                    <title>Originals_990x614</title>
+
+                    <path>
+                        //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/990x614_giant_talking_shoeboxes_74-18191.jpg
+                    </path>
+
+                    <hotspots>
+
+                        <hotspot>
+
+                            <productID>G45710</productID>
+
+                            <x>200</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>900</x>
+
+                            <y>600</y>
+
+                        </hotspot>
+
+                    </hotspots>
+
+                </path>
+
+                <thumbnailPath>
+
+                    <title>Originals_710x440</title>
+
+                    <path>
+                        //hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/710x440_giant_talking_shoeboxes_74-18191.jpg
+                    </path>
+
+                    <hotspots>
+
+                        <hotspot>
+
+                            <productID>G61786</productID>
+
+                            <x>200</x>
+
+                            <y>100</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61784</productID>
+
+                            <x>200</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>300</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>10</x>
+
+                            <y>10</y>
+
+                        </hotspot>
+
+                        <hotspot>
+
+                            <productID>G61254</productID>
+
+                            <x>500</x>
+
+                            <y>200</y>
+
+                        </hotspot>
+
+                    </hotspots>
+
+                </thumbnailPath>
+
+                <caption>
+
+                    <p>
+                        Hoping to silence skeptics
+                        <strong>wondering</strong>
+                        if
+                        <em>President Obama</em>
+                        had ever shot a gun....
+                    </p>
+
+                </caption>
+
+            </image>
+
+        </media>
+
+        <text>
+
+            <p>
+                Hoping to silence skeptics wondering if
+                <a href=\"http://adidas.com/p/G45710\" class=\"hotspots\">President Obama</a>
+                had ever shot a gun, the
+                <img src=\"//hp.dev.static.adidas.com/brand/binaries/global/images/2013/02/Originals_310x130_74-18191.jpg\" class=\"hotspots\" data-hotspots=\"[{productID:'G45710',x:100,y:100}]\" />
+                released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.Hoping to silence skeptics wondering if President Obama had ever shot a gun, the White House released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+            </p>
+
+            <p>
+                1Hoping to silence skeptics wondering if President Obama had ever shot a gun, the White House released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.Hoping to silence skeptics wondering if President Obama had ever shot a gun, the White House released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+            </p>
+
+            <p>
+                2Hoping to silence skeptics wondering if President Obama had ever shot a gun, the White House released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.Hoping to silence skeptics wondering if President Obama had ever shot a gun, the White House released a photo of him skeet shooting at Camp David, but the image has only stirred up more controversy in the gun control debate. NBC’s Peter Alexander reports and NBC’s Chuck Todd offers analysis.
+            </p>
+
+        </text>
+
+        <layout>
+
+            <tag>
+
+                <label>1 Column</label>
+
+                <id>1col</id>
+
+            </tag>
+
+        </layout>
+
+    </contentBlock>
+
+</News>
