@@ -32,7 +32,7 @@ var boost = {
 		boost.carousel();
 		boost.initboosthotspots();
 	},
-	poxIn: function($container) {
+	hotspot: function($container) {
 		console.log($container);
 		var $hotspotArray = $container.children('.boosths');
 
