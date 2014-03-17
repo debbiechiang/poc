@@ -65,7 +65,8 @@ Handlebars.registerHelper('tagHandler', function(context, block){
         winH: $(window).height(),
         absLeft: ($(window).width() - 950) / 2, // the distance from the left edge to the content well
         pos: 0,
-        hsLoaded: false, // are the lookbook hotspots loaded?
+        productDock: false,
+        lookDock: false,
         urls: {
             // reviews query urls
             local: 'js/allin/boostquery.js',
@@ -160,12 +161,12 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             // product carousel 
             boost.els.$carousel = $('.carousel');
             boost.els.$carouselcta = boost.els.$carousel.find('.bigcta');
-            boost.els.$carouselpage = boost.els.$carousel.find('#productpagination');      
+            boost.els.$carouselpage = $('#productpagination');      
 
             // lookbook carousel
             boost.els.$lookbook = $('.lookbook');
             boost.els.$lookbookcta = boost.els.$lookbook.find('.bigcta');
-            boost.els.$lookbookpage = boost.els.$lookbook.find('#lookpagination');              
+            boost.els.$lookbookpage = $('#lookpagination');              
         }
     };
 
@@ -301,19 +302,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
 
             $('.watchvideo').css('left',664-$('.watchvideo').width()/2);
 
-            // methods for docking and floating content
-
-            $.fn.dockTo = function(options){
-                var defaults = {
-                    'position': 'fixed'
-                };
-                var opt = $.extend(defaults, options);
-                var $el = $(this);
-                $el.each(function() {
-                    $(this).css(opt);
-                });
-            };
-
             this.alignIt($('.mensredshoe'), 0, 'left');
 
            
@@ -321,7 +309,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
 
         reset: function() {
             // If the user scrolls back up to the top of the slide, reset the entire experience. 
-            // boost.vars.hsLoaded = false;
             $('.boosths').css('opacity',0).removeClass('active');
             $('.slide').data('hsLoaded', false);
             boost.els.$screen1.removeClass('slideshowView');
@@ -511,7 +498,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                         default:
                             boost.els.$screen1.addClass('slideshowView');
                             boost.els.$cloneholder02.removeClass('hidden');
-                             $('#productpagination').dockTo({
+                            boost.els.$carouselpage.css({
                                 'position': 'absolute'
                             });
                         break;
@@ -539,13 +526,13 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                         case 1:
                             boost.els.$shoePrev.removeClass('inactive');
                             boost.els.$cloneholder02.removeClass('hidden');
-                            $('#productpagination').dockTo({
+                            boost.els.$carouselpage.css({
                                 'position': 'absolute'
                             });
                             break;
                         default:
                             boost.els.$shoePrev.removeClass('inactive');
-                            $('#productpagination').dockTo({
+                            boost.els.$carouselpage.css({
                                 'position': 'absolute'
                             });
                             break;
@@ -676,7 +663,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                     var goingTo = boost.els.$lookbook.triggerHandler('currentPage');
 
                     if (goingTo > 0){
-                        boost.els.$lookbookcta.dockTo({
+                        boost.els.$lookbookcta.css({
                            'position':'absolute',
                            top:584,
                            right:0
@@ -1048,75 +1035,88 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 $('.stickyfooter').addClass('hidden');
             } else {
                 $('.stickyfooter').removeClass('hidden');
-                $('#tray-share').mousemove(function(e){
-                    $('#at15s').css({
-                        'position' : 'fixed',
-                        'top': boost.vars.winH -230,
-                        'left': boost.vars.absLeft + 30
-                    });
-                });
             }
 
 
-            // @todo: generalize this docking section, this is totally not DRY. -- DC
-
-            // Product slideshow pagination + CTA
+            // Dock/Undock product pagination + CTA
             if (winBottom > 1300 && winBottom < 1600){
-                 $('#productpagination').dockTo({
-                    bottom:82,
-                    left: (boost.vars.winW - 121)/2
+                if (boost.vars.productDock === false) {
+
+                    // dock the pagination div
+                    boost.els.$carouselpage.css({
+                        position: 'fixed',
+                        bottom: 82,
+                        left: (boost.vars.winW - 121)/2
+                    });
+
+                    // if it's the first slide of the carousel, dock the CTA
+                    if (boost.els.$carousel.triggerHandler('currentPage') === 0){
+                        boost.els.$carouselcta.css({
+                            position: 'fixed',
+                            top: 'auto',
+                            bottom:82,
+                            right:boost.vars.absLeft
+                        });
+                    }
+
+                    boost.vars.productDock = true;
+                }
+            } else if (boost.vars.productDock === true){
+                // unock the product carousel elements. 
+                boost.els.$carouselpage.css({
+                    position: 'absolute'
                 });
-            }else{
-                $('#productpagination').dockTo({
-                    'position': 'absolute'
+
+                boost.els.$carouselcta.css({
+                   position: 'absolute',
+                   top: 584,
+                   right: 0
                 });
+
+                boost.vars.productDock = false;
             }
 
-            if (winBottom > 1300 && winBottom < 1500 && $('.carousel').triggerHandler('currentPage') === 0){
-                $('.carousel .bigcta').dockTo({
-                    top:'auto',
-                    bottom:82,
-                    right:boost.vars.absLeft
-                });
-            }else {
-                $('.carousel .bigcta').dockTo({
-                   'position':'absolute',
-                   top:584,
-                   right:0
-                });
-            }
-
-
-            // Lookbook pagination + CTA
+            // Dock/undock lookbook pagination + CTA
             if (winBottom > 2850 && winBottom < 3200){
-                $('#lookpagination').dockTo({
-                    bottom:82,
-                    left: (boost.vars.winW - 86)/2
-                });
-            }else {
-                $('#lookpagination').dockTo({
-                    'position': 'relative',
+                if (boost.vars.lookDock === false) {
+                    // dock the pagination div
+                    boost.els.$lookbookpage.css({
+                        position: 'fixed',
+                        bottom: 82,
+                        left: (boost.vars.winW - 86)/2
+                    });
+
+                    // if it's the first slide of the lookbook, dock the CTA
+                    if (boost.els.$lookbook.triggerHandler('currentPage') === 0){
+                        boost.els.$lookbookcta.css({
+                            position: 'fixed',
+                            top: 'auto',
+                            bottom: 82,
+                            right:boost.vars.absLeft
+                        });
+                    }
+
+                    boost.vars.lookDock = true;
+                }
+            } else if (boost.vars.lookDock === true){
+                // undock everything
+                boost.els.$lookbookpage.css({
+                    position: 'relative',
                     bottom: 'auto',
                     left:'auto',
                     'margin': '-100px auto 0'
                 });
-            }
 
-            if (winBottom > 2850 && winBottom < 3100  && $('.lookbook').triggerHandler('currentPage') === 0){
-                $('.lookbook .bigcta').dockTo({
-                    top:'auto',
-                    bottom:82,
-                    right:boost.vars.absLeft
-                });
-            }else {
-                $('.lookbook .bigcta').dockTo({
-                   'position':'absolute',
+                boost.els.$lookbookcta.css({
+                   position :'absolute',
                    top:584,
                    right:0
                 });
+
+                boost.vars.lookDock = false;
             }
 
-            // Carousel Arrows
+            // Dock the carousel arrows if the window height is small
             if (boost.vars.winH < 800) {
                 if (winBottom > 1200 && winBottom < 1600){
                     $('#shoeprev, #shoenext').addClass('docked');
