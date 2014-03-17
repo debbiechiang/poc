@@ -103,7 +103,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
         this.cache.init();
 
         this.preloader.init();
-        this.events.init();
         this.rAF();
         this.loader.init();
         this.inView();
@@ -115,9 +114,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
         this.colors.init();
         this.reviews.init();
         this.ytiframe.init();
-
-        // load social plugins after video has started to play
-        $.subscribe('boost.youtube.playing', boost.social.addthis);
 
         // fire external library
         $.publish('boost.balldrop.init', {
@@ -360,8 +356,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
             /* The max window width is 1920px and the content well is 950px wide. The content well always stays centered
              * in the visible window area. Decorative elements are fixed relative to that 950px content well; having a wider
              * browser window will reveal more of the hero shoe, but the shoe will always stay centered in the viewport. In other words,
-             * there is always a point in the image that will overlap the left edge of the content well. This is set manually and is a pain,
-             * but hopefully only once.
+             * there is always a point in the image that will overlap the left edge of the content well.
              *
              * Everything that needs to be called on browser resize goes here.
              */
@@ -402,6 +397,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 width: boost.vars.winW/2 + 10,
                 top: boost.vars.headerHeight
             });
+
             boost.els.$splitScreenHero.css({
                 marginLeft: boost.vars.absLeft -520
             });
@@ -412,7 +408,9 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 $('.menssidewiper').css({
                     width: boost.vars.winW/2 + 40
                 });
+
                 boost.style.alignIt($('.mensredshoe'), 0, 'left');
+
                 $("#womensexample").css({
                     left:boost.vars.winW/2
                 });
@@ -422,7 +420,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 'max-width': boost.vars.winW + 'px'
             });
 
-            $('.screen, .caroufredsel_wrapper').css({
+            $('.screen, .caroufredsel_wrapper, .slide').css({
                 'width': boost.vars.winW
             });
 
@@ -779,99 +777,125 @@ Handlebars.registerHelper('tagHandler', function(context, block){
         womensscreen: $('.womensboost'),
         header: $('#colors_bst h1'),
 
+        switchScreen: function($color1, $color2){
+             // @params: jQuery objects for shoe color option by gender. $color1 is default.
+            var $curr = $(this);
+            var $color = $color1.hasClass('displayed') ? $color1 : $color2;
+
+            // reset thumbnails
+            $curr.find('.currentImg').removeClass('currentImg').hide();
+            $curr.find('.actv').removeClass('actv');
+
+            // show the first thumbnail 
+            $color.find('img').eq(0).show().addClass('currentImg');
+            $color.find('.thumbs a').eq(0).addClass('actv');
+        },
+
         goToMens: function() {
-            boost.colors.header.hide();
-            boost.colors.menssidewiper.transition({
+            this.header.hide();
+
+            // animate the splitscreen BG to the right
+            this.menssidewiper.transition({
                 width: boost.vars.winW + 80
             }, 400, 'easeInSine', function() {
                 boost.els.$screen2.addClass('noBG');
             });
-            boost.colors.mensexample.transition({
+            
+            // animate the men's example shoe to the right
+            this.mensexample.transition({
                 left: boost.colors.kickoffscreen
             }, 540, 'easeInSine');
-            boost.colors.mensscreen.delay(300).transition({
+
+            // reset the thumbnails
+            this.switchScreen.call(this.mensscreen, $('#mens_red'), $('#mens_black'));
+            
+            // transition the men's screen in. 
+            this.mensscreen.delay(300).transition({
                 left: 0
-            },600, function() {
-                $('.shoe_large img').removeClass('currentImg').hide();
-                $('.thumbs .actv').removeClass('actv');
-                if ($('#mens_black').hasClass('displayed')){
-                    $('#mens_black img').eq(0).css('display', 'block').addClass('currentImg');
-                    $('#mens_black .thumbs a').eq(0).addClass('actv');
-                } else {
-                    $('#mens_red img').eq(0).css('display', 'block').addClass('currentImg');
-                    $('#mens_red .thumbs a').eq(0).addClass('actv');
-                }
-            }).addClass('seen');
+            },600).addClass('seen');
 
         },
         resetColorSplit: function() {
 
-            if (boost.colors.mensscreen.hasClass('seen')){
+            if (this.mensscreen.hasClass('seen')){
                 boost.els.$screen2.removeClass('noBG');
 
-                boost.colors.mensclone.addClass('hidden');
-                boost.colors.menssidewiper.delay(100).transition({
+                this.mensclone.addClass('hidden');
+                this.menssidewiper.delay(100).transition({
                     width: boost.vars.winW/2 + 40
                 }, 300, function() {
                     boost.colors.header.show();
                 });
-                boost.colors.mensexample.show().transition({
+                this.mensexample.show().transition({
                     left: boost.vars.absLeft
                 }, 400);
-                boost.colors.mensscreen.transition({
+                this.mensscreen.transition({
                     left:'-100%'
                 }, 300).removeClass('seen');
             }else{
-                boost.colors.menssidewiper.delay(100).transition({
+                this.menssidewiper.delay(100).transition({
                     width:boost.vars.winW/2 + 40
                 }, 300, function(){
                     boost.colors.mensexample.show();
                     boost.colors.mensclone.addClass('hidden');
                     boost.colors.header.show();
                 });
-                boost.colors.womensexample.transition({
+                this.womensexample.transition({
                     left:boost.vars.winW/2
                 },400);
-                boost.colors.womensscreen.transition({
+                this.womensscreen.transition({
                     left:2200
                 }, 300).removeClass('seen');
             }
         },
         goToWomens: function() {
-            boost.colors.header.hide();
-            boost.colors.mensclone.removeClass('hidden');
-            boost.colors.mensexample.hide();
-            boost.colors.menssidewiper.transition({
+            this.header.hide();
+
+            // transition out the men's splitscreen elements.
+            // this is necessary due to the structure of the diagonal splitscreen.
+            this.mensclone.removeClass('hidden');
+            this.mensexample.hide();
+            this.menssidewiper.transition({
                 width:0
             }, 400);
-            boost.colors.womensexample.transition({
+
+            // transition the women's example shoe off to the left. 
+            this.womensexample.transition({
                 left: -500
             },700);
-            boost.colors.womensscreen.transition({
-                left:0
-            },650, function() {
-                $('.shoe_large img').removeClass('currentImg').hide();
-                $('.thumbs .actv').removeClass('actv');
-                if ($('#womens_black').hasClass('displayed')){
-                    $('#womens_black img').eq(0).css('display', 'block').addClass('currentImg');
-                    $('#womens_black .thumbs a').eq(0).addClass('actv');
-                } else {
-                    $('#womens_teal img').eq(0).css('display', 'block').addClass('currentImg');
-                    $('#womens_teal .thumbs a').eq(0).addClass('actv');
 
-                }
-             }).addClass('seen');
+            // reset the thumbnails 
+            this.switchScreen.call(this.womensscreen, $('#womens_teal'), $('#womens_black'));
+
+            // transition in the women's screen. 
+            this.womensscreen.transition({
+                left:0
+            },650).addClass('seen');
 
         },
 
         init : function(){
-
+            var mainImg, currentImg;
             var firstShoeFadeDuration = 200;
-            var firstMensBlackIndex = 'i5';
-            var firstMensRedIndex = 'i0';
-            var firstWomensTealIndex = 'i15';
-            var firstWomensBlackIndex = 'i10';
             boost.colors.kickoffscreen = '+='+ (boost.vars.winW - boost.vars.absLeft) + 'px';
+
+            function paletteToggle(context, color, gender){
+                var $slide = $('.' + gender + 'boost');
+                var $gallery = $('#' + gender + '_' + color);
+
+                // switch color palette indicator
+                $slide.find('.color_pal').removeClass('active');
+                $(context).find('span.color_pal').addClass('active');
+
+                // switch gallery container
+                $slide.find('.color_chosen').removeClass('displayed').addClass('hide');
+                $gallery.removeClass('hide').addClass('displayed');
+
+                // switch gallery thumbnail and image
+                $slide.find('.shoe_large img').fadeOut(100).removeClass('currentImg');
+                $gallery.find('.thumbs a').removeClass('actv').eq(0).addClass('actv');
+                $gallery.find('img').eq(0).addClass('currentImg').fadeIn('fast');
+            }
 
             // view men's boost
             $('.viewmens, .menssidewiper, .mensside').on("click", function(e) {
@@ -890,60 +914,28 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 return false;
             });
 
-            // control color pallete selection (black)
-            // @todo combine this and the code below to genericize color toggle
-            $('#mensblack').on("click", function() {
-                $('.mensboost').find('.color_pal').removeClass('active');
-                $(this).find('span.color_pal').addClass('active');
-                $('#mens_red').removeClass('displayed').addClass('hide');
-                $('#mens_black').removeClass('hide').addClass('displayed');
-
-               
-                $('#mens_red .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
-                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstMensBlackIndex + '"]').addClass('actv');
-                $('#mens_black .shoe_large').find('img.' + firstMensBlackIndex).addClass('currentImg').fadeIn('fast');
-               
+            // bind palette events 
+            $('#mensblack').on("click", function(e) {
+                paletteToggle(this, 'black', 'mens');
                 return false;
             });
 
-            // control color pallete selection (red)
-            // @todo combine this and the code above to genericize color toggle
-            $('#mensred').on("click", function() {
-                $('.mensboost').find('.color_pal').removeClass('active');
-                $(this).find('span.color_pal').addClass('active');
-                $('#mens_black').removeClass('displayed').addClass('hide');
-                $('#mens_red').removeClass('hide').addClass('displayed');                
-                $('#mens_black .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
-                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstMensRedIndex + '"]').addClass('actv');
-                $('#mens_red .shoe_large').find('img.' + firstMensRedIndex).addClass('currentImg').fadeIn('fast');                
+            $('#mensred').on("click", function(e) {
+                paletteToggle(this, 'red', 'mens');          
                 return false;
             });
 
-
-            $('#womensblack').on("click", function() {
-                $('.womensboost').find('.color_pal').removeClass('active');
-                $(this).find('span.color_pal').addClass('active');
-                $('#womens_teal').removeClass('displayed').addClass('hide');
-                $('#womens_black').removeClass('hide').addClass('displayed');               
-                $('#womens_teal .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
-                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstWomensBlackIndex + '"]').addClass('actv');
-                $('#womens_black .shoe_large').find('img.' + firstWomensBlackIndex).addClass('currentImg').fadeIn('fast');               
+            $('#womensblack').on("click", function(e) {
+                paletteToggle(this, 'black', 'womens');
                 return false;
             });
 
-            $('#womensteal').on("click", function() {
-                $('.womensboost').find('.color_pal').removeClass('active');
-                $(this).find('span.color_pal').addClass('active');
-                $('#womens_black').removeClass('displayed').addClass('hide');
-                $('#womens_teal').removeClass('hide').addClass('displayed');             
-                $('#womens_black .shoe_large').find('img').fadeOut(100).removeClass('currentImg');
-                $('.thumbs a').removeClass('actv').filter('a[rel="' + firstWomensTealIndex + '"]').addClass('actv');
-                $('#womens_teal .shoe_large').find('img.' + firstWomensTealIndex).addClass('currentImg').fadeIn('fast');
-                return false;
+            $('#womensteal').on("click", function(e) {
+                paletteToggle(this, 'teal', 'womens');
+                return false
             });
-        
-            var mainImg, currentImg;
             
+            // construct gallery relationships
             $(".shoe_large img").each(function(index, element) {
                 $(element).attr("class", 'i' + index);
             });
@@ -951,7 +943,7 @@ Handlebars.registerHelper('tagHandler', function(context, block){
                 $(element).attr("rel", 'i' + index);
             });
            
-            // thumbnail clicking to show shoe
+            // bind thumbnail events
             $('.thumbs a').click(function() {
                 $(this).parent().find('a').removeClass('actv');
              
@@ -1851,42 +1843,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
         }
     };
 
-    var social = {
-        addthis : function(e, flag){
-            if (flag) {
-               
-                if (_market === 'br' || _market === 'fr' || _market === 'it' || _market === 'es' || _market === 'de' || _market === 'nl' || _market === 'pt' || _market === 'ru' || _market === 'uk'){
-                    
-                    $('.social_btns, .shareboost').css('display', 'block');
-               
-                    var source = boost.vars.urls.addthis;
-                    boost.loader.load(source, function(){
-                            $.unsubscribe('boost.youtube.playing');
-                        },
-                        false
-                    );
-
-                } //end if _market
-            };
-        }        
-    };
-
-    var events = {
-        init : function(){
-            $('body').on('click', function (e) {
-                $.publish('boost.events.delegation.body.click', e);
-            });
-        }
-    };
-
-    $('.addthis_button').mousemove(function(e){
-        $('#at15s').css({
-            'position' : 'absolute',
-            'left': boost.vars.winW/2 - 163,
-            'top': '4147px'
-        });
-    });
-
 
     var ytubecountrycode, ccOnOff; 
     if (_market==='latin-america'){ytubecountrycode = 'es_mx';}
@@ -1978,9 +1934,6 @@ Handlebars.registerHelper('tagHandler', function(context, block){
         Modernizr : Modernizr,
         loader : loader,
         localize : localize,
-        social : social,
-        events : events,
-       // loadYTIFrameScript : loadYTIFrameScript,
         ytiframe : ytiframe
 
     };
